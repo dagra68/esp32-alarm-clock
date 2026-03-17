@@ -1,0 +1,93 @@
+# Roadmap: ESP32 Smart Alarm Clock
+
+## Overview
+
+Vom blanken LilyGo T-RGB Board zum vollstaendigen ESPHome-Wecker in 4 Phasen: Zuerst laeuft das Display mit Uhrzeit (Board-Validierung inklusive), dann kommt die Alarm-Kernfunktion mit Buzzer und Snooze, danach die Home-Assistant-Integration fuer Fernsteuerung und Feiertags-Automatisierung, und zuletzt die analoge Uhren-Darstellung mit Seitenwechsel.
+
+## Phases
+
+**Phase Numbering:**
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+
+Decimal phases appear between their surrounding integers in numeric order.
+
+- [ ] **Phase 1: Board und Digitale Uhr** - ESPHome-Grundkonfiguration, Display-Treiber, NTP-Sync, digitale Zeitanzeige
+- [ ] **Phase 2: Alarm-Kernfunktion** - Alarm-Logik, RTTTL-Buzzer, Snooze, Touch-Bedienung am Display
+- [ ] **Phase 3: Home Assistant Integration** - HA-Entities, Automatisierung, Helligkeit, Melodie-Auswahl
+- [ ] **Phase 4: Analoge Uhr und Seitenwechsel** - LVGL Meter-Widget, Touch-Navigation zwischen Zifferblaettern
+
+## Phase Details
+
+### Phase 1: Board und Digitale Uhr
+**Goal**: Nutzer sieht die aktuelle Uhrzeit und das Datum auf dem runden Display -- Board laeuft stabil mit ESPHome
+**Depends on**: Nothing (first phase)
+**Requirements**: TIME-01, DISP-01, DISP-03
+**Success Criteria** (what must be TRUE):
+  1. ESP32-S3 bootet mit ESPHome (ESP-IDF Framework, PSRAM aktiv) und verbindet sich mit WLAN
+  2. Nutzer sieht die aktuelle Uhrzeit (NTP-synchronisiert, Zeitzone Europe/Berlin) auf dem runden Display
+  3. Nutzer sieht Datum und Wochentag auf dem Display
+  4. Display-Backlight ist eingeschaltet und das Display zeigt LVGL-Inhalte korrekt an
+**Plans**: TBD
+
+Plans:
+- [ ] 01-01: TBD
+- [ ] 01-02: TBD
+
+### Phase 2: Alarm-Kernfunktion
+**Goal**: Nutzer wird Mo-Fr zur eingestellten Zeit durch RTTTL-Melodie geweckt und kann per Touch und physischer Taste reagieren
+**Depends on**: Phase 1
+**Requirements**: ALRM-01, ALRM-02, ALRM-03, ALRM-04, ALRM-05, ALRM-06, DISP-04, DISP-05
+**Success Criteria** (what must be TRUE):
+  1. Nutzer kann eine Alarmzeit (Stunde + Minute) direkt am Touch-Display einstellen
+  2. Alarm loest Mo-Fr zur konfigurierten Zeit eine RTTTL-Melodie ueber den Piezo-Buzzer aus
+  3. Nutzer kann per physischer Taste 5 Minuten Snooze ausloesen (Alarm pausiert und klingelt erneut)
+  4. Nutzer kann den aktiven Alarm per Touch dauerhaft ausschalten
+  5. Display zeigt Alarm-Status (ein/aus) und naechste Alarmzeit an
+**Plans**: TBD
+
+Plans:
+- [ ] 02-01: TBD
+- [ ] 02-02: TBD
+- [ ] 02-03: TBD
+
+### Phase 3: Home Assistant Integration
+**Goal**: Nutzer kann den Wecker vollstaendig ueber Home Assistant fernsteuern und automatisieren
+**Depends on**: Phase 2
+**Requirements**: HA-01, HA-02, HA-03, HA-04, HA-05, CTRL-01
+**Success Criteria** (what must be TRUE):
+  1. Alarm Ein/Aus ist als Switch-Entity in Home Assistant sichtbar und steuerbar
+  2. Alarmzeit (Stunde + Minute) kann ueber Number-Entities in HA eingestellt werden
+  3. Home Assistant kann den Alarm per Automatisierung deaktivieren (z.B. Feiertags-Kalender)
+  4. Melodie-Auswahl ist als Select-Entity in HA verfuegbar (mind. 3 RTTTL-Melodien)
+  5. Display-Helligkeit ist ueber HA-Slider und Touch am Geraet steuerbar
+**Plans**: TBD
+
+Plans:
+- [ ] 03-01: TBD
+- [ ] 03-02: TBD
+
+### Phase 4: Analoge Uhr und Seitenwechsel
+**Goal**: Nutzer kann zwischen digitalem und analogem Zifferblatt per Touch wechseln
+**Depends on**: Phase 1
+**Requirements**: DISP-02, DISP-06
+**Success Criteria** (what must be TRUE):
+  1. Nutzer sieht eine analoge Uhr mit Stunden-, Minuten- und Sekundenzeiger (LVGL Meter-Widget)
+  2. Nutzer kann per Touch zwischen analogem und digitalem Zifferblatt hin- und herwechseln
+  3. Beide Zifferblaetter zeigen die korrekte Uhrzeit (NTP-synchronisiert)
+**Plans**: TBD
+
+Plans:
+- [ ] 04-01: TBD
+
+## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Board und Digitale Uhr | 0/2 | Not started | - |
+| 2. Alarm-Kernfunktion | 0/3 | Not started | - |
+| 3. Home Assistant Integration | 0/2 | Not started | - |
+| 4. Analoge Uhr und Seitenwechsel | 0/1 | Not started | - |
