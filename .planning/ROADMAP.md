@@ -28,11 +28,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Nutzer sieht die aktuelle Uhrzeit (NTP-synchronisiert, Zeitzone Europe/Berlin) auf dem runden Display
   3. Nutzer sieht Datum und Wochentag auf dem Display
   4. Display-Backlight ist eingeschaltet und das Display zeigt LVGL-Inhalte korrekt an
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md -- Board-Setup, Display, NTP, LVGL digitale Uhr mit Datum
 
 ### Phase 2: Alarm-Kernfunktion
 **Goal**: Nutzer wird Mo-Fr zur eingestellten Zeit durch RTTTL-Melodie geweckt und kann per Touch und physischer Taste reagieren
@@ -87,7 +86,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Board und Digitale Uhr | 0/2 | Not started | - |
+| 1. Board und Digitale Uhr | 0/1 | Planning complete | - |
 | 2. Alarm-Kernfunktion | 0/3 | Not started | - |
 | 3. Home Assistant Integration | 0/2 | Not started | - |
 | 4. Analoge Uhr und Seitenwechsel | 0/1 | Not started | - |
