@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 ## Current Position
 
 Phase: 1 of 4 (Board und Digitale Uhr)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-03-17 -- Roadmap erstellt
+Plan: 0/1 in current phase (01-01 pausiert bei Checkpoint)
+Status: Wartet auf Hardware (LilyGo T-RGB)
+Last activity: 2026-03-17 -- Plan 01-01 Tasks 1+2 abgeschlossen, Task 3 (Board-Flash) pausiert
 
-Progress: [..........] 0%
+Progress: [█.........] 10%
 
 ## Performance Metrics
 
@@ -58,5 +58,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: Roadmap erstellt, bereit fuer Phase 1 Planung
-Resume file: None
+Stopped at: Plan 01-01, Task 3 (Board-Flash) -- wartet auf LilyGo T-RGB Hardware
+Resume: /gsd:execute-phase 1 -- dann "approved" eingeben nach erfolgreichem Flash
