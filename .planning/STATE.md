@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Wartet auf Hardware (LilyGo T-RGB)
-stopped_at: Plan 01-01, Task 3 (Board-Flash Checkpoint) -- wartet auf Hardware-Verifikation durch Nutzer
-last_updated: "2026-03-24T08:06:26.109Z"
-last_activity: 2026-03-17 -- Plan 01-01 Tasks 1+2 abgeschlossen, Task 3 (Board-Flash) pausiert
+status: Phase 1 abgeschlossen -- bereit fuer Phase 2
+stopped_at: Phase 1 Plan 01 vollstaendig abgeschlossen -- Hardware verifiziert, Board zeigt Uhrzeit korrekt
+last_updated: "2026-03-24T08:34:13.241Z"
+last_activity: 2026-03-24 -- Plan 01-01 alle 3 Tasks abgeschlossen, Hardware-Verifikation erfolgreich
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 1
   completed_plans: 1
-  percent: 10
+  percent: 25
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Der Wecker weckt zuverlaessig an Wochentagen und laesst sich ueber Home Assistant automatisch an Feiertagen stumm schalten.
-**Current focus:** Phase 1: Board und Digitale Uhr
+**Current focus:** Phase 2: Alarm-Kernfunktion (bereit zum Planen)
 
 ## Current Position
 
-Phase: 1 of 4 (Board und Digitale Uhr)
-Plan: 0/1 in current phase (01-01 pausiert bei Checkpoint)
-Status: Wartet auf Hardware (LilyGo T-RGB)
-Last activity: 2026-03-17 -- Plan 01-01 Tasks 1+2 abgeschlossen, Task 3 (Board-Flash) pausiert
+Phase: 1 of 4 ABGESCHLOSSEN -- naechste Phase: Phase 2 (Alarm-Kernfunktion)
+Plan: 1/1 in Phase 1 (01-01 vollstaendig, alle 3 Tasks inkl. Hardware-Verifikation)
+Status: Phase 1 abgeschlossen -- bereit fuer Phase 2
+Last activity: 2026-03-24 -- Plan 01-01 vollstaendig, Hardware-Verifikation erfolgreich, Board zeigt korrekte Uhrzeit
 
-Progress: [█.........] 10%
+Progress: [██████████] 100% (Phase 1)
 
 ## Performance Metrics
 
@@ -51,6 +51,7 @@ Progress: [█.........] 10%
 
 *Updated after each plan completion*
 | Phase 01-board-und-digitale-uhr P01 | 30 | 2 tasks | 2 files |
+| Phase 01-board-und-digitale-uhr P01 | 60 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - [Phase 01-board-und-digitale-uhr]: ft5x06 statt cst816: T-RGB 2.1 Half Circle hat FT3267 Touch-IC (ft5x06-Treiber, nicht cst816)
 - [Phase 01-board-und-digitale-uhr]: SPI-Bus shared mit I2C auf GPIO48 via allow_other_uses fuer mipi_rgb LCD-Initialisierung
 - [Phase 01-board-und-digitale-uhr]: LVGL buffer_size 25% fuer stabilen Start, Package-Aufteilung erst ab Phase 2
+- [Phase 01-board-und-digitale-uhr]: SPI-Pins fuer ST7701S LCD-Init laufen ueber XL9535 IO5/IO4 (nicht GPIO48/GPIO47 direkt)
+- [Phase 01-board-und-digitale-uhr]: ft5x06 reset_pin weglassen: Treiber unterstuetzt diese Option nicht, wirft Fehler
 
 ### Pending Todos
 
@@ -77,6 +80,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T08:06:26.088Z
-Stopped at: Plan 01-01, Task 3 (Board-Flash Checkpoint) -- wartet auf Hardware-Verifikation durch Nutzer
-Resume: /gsd:execute-phase 1 -- dann "approved" eingeben nach erfolgreichem Flash
+Last session: 2026-03-24T08:34:13.235Z
+Stopped at: Phase 1 Plan 01 vollstaendig abgeschlossen -- Hardware verifiziert, Board zeigt Uhrzeit korrekt
+Resume: /gsd:plan-phase 2 -- Phase 2 (Alarm-Kernfunktion) planen

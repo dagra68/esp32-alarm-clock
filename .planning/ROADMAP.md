@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 1 plan
 
 Plans:
-- [ ] 01-01-PLAN.md -- Board-Setup, Display, NTP, LVGL digitale Uhr mit Datum
+- [x] 01-01-PLAN.md -- Board-Setup, Display, NTP, LVGL digitale Uhr mit Datum
 
 ### Phase 2: Alarm-Kernfunktion
 **Goal**: Nutzer wird Mo-Fr zur eingestellten Zeit durch RTTTL-Melodie geweckt und kann per Touch und physischer Taste reagieren
