@@ -32,9 +32,21 @@ wifi:
     ssid: "Wecker-Fallback"
     password: !secret fallback_password
 
+spi:
+  - id: lcd_spi
+    clk_pin:
+      number: GPIO48
+      allow_other_uses: true
+    mosi_pin:
+      number: GPIO47
+      allow_other_uses: true
+    interface: software
+
 i2c:
   sda: GPIO8
-  scl: GPIO48
+  scl:
+    number: GPIO48
+    allow_other_uses: true
 
 xl9535:
   - id: xl9535_hub
@@ -46,17 +58,19 @@ display:
     id: my_display
     auto_clear_enabled: false
     update_interval: never
+    hsync_pin:
+      number: GPIO47
+      allow_other_uses: true
+    show_test_card: true
     reset_pin:
       xl9535: xl9535_hub
       number: 6
-      inverted: true
     enable_pin:
       xl9535: xl9535_hub
       number: 2
-      inverted: true
 
 touchscreen:
-  - platform: cst816
+  - platform: ft5x06
     id: my_touchscreen
     interrupt_pin: GPIO1
     reset_pin:
