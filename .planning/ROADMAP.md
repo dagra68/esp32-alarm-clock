@@ -12,10 +12,10 @@ Vom blanken LilyGo T-RGB Board zum vollstaendigen ESPHome-Wecker in 4 Phasen: Zu
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [x] **Phase 1: Board und Digitale Uhr** - ESPHome-Grundkonfiguration, Display-Treiber, NTP-Sync, digitale Zeitanzeige (completed 2026-03-24)
+- [x] **Phase 1: Board und Digitale Uhr** - ESPHome-Grundkonfiguration, Display-Treiber, NTP-Sync, digitale Zeitanzeige (completed 2026-03-24)
 - [ ] **Phase 2: Alarm-Kernfunktion** - Alarm-Logik, RTTTL-Buzzer, Snooze, Touch-Bedienung am Display
 - [ ] **Phase 3: Home Assistant Integration** - HA-Entities, Automatisierung, Helligkeit, Melodie-Auswahl
-- [ ] **Phase 4: Analoge Uhr und Seitenwechsel** - LVGL Meter-Widget, Touch-Navigation zwischen Zifferblaettern
+- [ ] **Phase 4: Analoge Uhr und Seitenwechsel** - LVGL Meter-Widget, HA-gesteuerter Seitenwechsel
 
 ## Phase Details
 
@@ -67,17 +67,17 @@ Plans:
 - [ ] 03-02: TBD
 
 ### Phase 4: Analoge Uhr und Seitenwechsel
-**Goal**: Nutzer kann zwischen digitalem und analogem Zifferblatt per Touch wechseln
+**Goal**: Nutzer kann zwischen digitalem und analogem Zifferblatt per HA-Select wechseln
 **Depends on**: Phase 1
 **Requirements**: DISP-02, DISP-06
 **Success Criteria** (what must be TRUE):
-  1. Nutzer sieht eine analoge Uhr mit Stunden-, Minuten- und Sekundenzeiger (LVGL Meter-Widget)
-  2. Nutzer kann per Touch zwischen analogem und digitalem Zifferblatt hin- und herwechseln
+  1. Nutzer sieht eine analoge Uhr mit Stunden- und Minutenzeiger (LVGL Meter-Widget)
+  2. Nutzer kann per HA-Select zwischen analogem und digitalem Zifferblatt wechseln
   3. Beide Zifferblaetter zeigen die korrekte Uhrzeit (NTP-synchronisiert)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md -- Analog-Uhr-Seite mit Meter-Widget, Select-Entities fuer Seitenwechsel und Farbauswahl
 
 ## Progress
 
