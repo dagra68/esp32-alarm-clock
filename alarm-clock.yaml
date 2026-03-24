@@ -111,6 +111,59 @@ switch:
           id: alarm_status_label
           text_color: 0x666666
 
+number:
+  - platform: template
+    name: "Alarm Stunde"
+    id: alarm_hour_number
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(alarm_hour);
+    set_action:
+      - globals.set:
+          id: alarm_hour
+          value: !lambda 'return (int)x;'
+      - lvgl.label.update:
+          id: alarm_status_label
+          text: !lambda |-
+            static char buf[16];
+            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                     id(alarm_hour), id(alarm_minute));
+            return buf;
+      - lvgl.label.update:
+          id: hour_value_label
+          text: !lambda |-
+            static char buf[4];
+            snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
+            return buf;
+
+  - platform: template
+    name: "Alarm Minute"
+    id: alarm_minute_number
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(alarm_minute);
+    set_action:
+      - globals.set:
+          id: alarm_minute
+          value: !lambda 'return (int)x;'
+      - lvgl.label.update:
+          id: alarm_status_label
+          text: !lambda |-
+            static char buf[16];
+            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                     id(alarm_hour), id(alarm_minute));
+            return buf;
+      - lvgl.label.update:
+          id: minute_value_label
+          text: !lambda |-
+            static char buf[4];
+            snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
+            return buf;
+
 globals:
   - id: alarm_hour
     type: int
