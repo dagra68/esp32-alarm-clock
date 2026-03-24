@@ -112,19 +112,25 @@ switch:
           id: alarm_status_label
           text_color: 0x666666
 
-number:
+datetime:
   - platform: template
-    name: "Alarm Stunde"
-    id: alarm_hour_number
-    min_value: 0
-    max_value: 23
-    step: 1
+    name: "Alarmzeit"
+    id: alarm_time
+    type: time
+    icon: mdi:alarm
     lambda: |-
-      return id(alarm_hour);
+      ESPTime t{};
+      t.hour = id(alarm_hour);
+      t.minute = id(alarm_minute);
+      t.second = 0;
+      return t;
     set_action:
       - globals.set:
           id: alarm_hour
-          value: !lambda 'return (int)x;'
+          value: !lambda 'return (int)x.hour;'
+      - globals.set:
+          id: alarm_minute
+          value: !lambda 'return (int)x.minute;'
       - lvgl.label.update:
           id: alarm_status_label
           text: !lambda |-
@@ -137,26 +143,6 @@ number:
           text: !lambda |-
             static char buf[4];
             snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
-            return buf;
-
-  - platform: template
-    name: "Alarm Minute"
-    id: alarm_minute_number
-    min_value: 0
-    max_value: 59
-    step: 1
-    lambda: |-
-      return id(alarm_minute);
-    set_action:
-      - globals.set:
-          id: alarm_minute
-          value: !lambda 'return (int)x;'
-      - lvgl.label.update:
-          id: alarm_status_label
-          text: !lambda |-
-            static char buf[16];
-            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
-                     id(alarm_hour), id(alarm_minute));
             return buf;
       - lvgl.label.update:
           id: minute_value_label
