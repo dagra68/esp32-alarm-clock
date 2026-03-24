@@ -181,6 +181,27 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
+  - id: alarm_melody_name
+    type: std::string
+    restore_value: yes
+    max_restore_data_length: 64
+    initial_value: '"Reveille"'
+
+select:
+  - platform: template
+    name: "Alarm Melodie"
+    id: alarm_melody_select
+    icon: mdi:music-note
+    options:
+      - "Reveille"
+      - "Entertainer"
+      - "Frere Jacques"
+    initial_option: "Reveille"
+    optimistic: true
+    set_action:
+      - globals.set:
+          id: alarm_melody_name
+          value: !lambda 'return x;'
 
 rtttl:
   output: buzzer_output
@@ -192,7 +213,12 @@ rtttl:
           lambda: 'return id(alarm_ringing);'
         then:
           - delay: 15s
-          - rtttl.play: 'Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c'
+          - rtttl.play: !lambda |-
+              if (id(alarm_melody_name) == "Entertainer")
+                return std::string("Entertainer:d=4,o=5,b=140:8d,8d#,8e,c,8e,c,8e,2b.,8c6,8c6,8c6,2a.,8b.,8a,8g,8a,8b,a,8a.,8g,8f#,8e,8d,2g,p");
+              if (id(alarm_melody_name) == "Frere Jacques")
+                return std::string("FrereJacques:d=4,o=5,b=126:c,d,e,c,c,d,e,c,e,f,2g,e,f,2g");
+              return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
 
 binary_sensor:
   - platform: gpio
@@ -232,7 +258,12 @@ script:
       - lvgl.page.show: digital_clock_page
       - delay: 5min
       - lambda: 'id(alarm_ringing) = true;'
-      - rtttl.play: 'Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c'
+      - rtttl.play: !lambda |-
+          if (id(alarm_melody_name) == "Entertainer")
+            return std::string("Entertainer:d=4,o=5,b=140:8d,8d#,8e,c,8e,c,8e,2b.,8c6,8c6,8c6,2a.,8b.,8a,8g,8a,8b,a,8a.,8g,8f#,8e,8d,2g,p");
+          if (id(alarm_melody_name) == "Frere Jacques")
+            return std::string("FrereJacques:d=4,o=5,b=126:c,d,e,c,c,d,e,c,e,f,2g,e,f,2g");
+          return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
       - lvgl.page.show: alarm_ringing_page
       - script.execute: alarm_timeout_script
 
@@ -274,7 +305,12 @@ time:
               condition:
                 lambda: 'return id(alarm_ringing);'
               then:
-                - rtttl.play: 'Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c'
+                - rtttl.play: !lambda |-
+                    if (id(alarm_melody_name) == "Entertainer")
+                      return std::string("Entertainer:d=4,o=5,b=140:8d,8d#,8e,c,8e,c,8e,2b.,8c6,8c6,8c6,2a.,8b.,8a,8g,8a,8b,a,8a.,8g,8f#,8e,8d,2g,p");
+                    if (id(alarm_melody_name) == "Frere Jacques")
+                      return std::string("FrereJacques:d=4,o=5,b=126:c,d,e,c,c,d,e,c,e,f,2g,e,f,2g");
+                    return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
                 - lvgl.page.show: alarm_ringing_page
 
 lvgl:
