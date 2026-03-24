@@ -207,7 +207,7 @@ lvgl:
   touchscreens:
     - touchscreen_id: my_touchscreen
       long_press_time: 600ms
-      long_press_repeat_time: never
+      long_press_repeat_time: 65535ms
   buffer_size: 25%
   pages:
     - id: digital_clock_page
