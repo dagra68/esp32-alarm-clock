@@ -75,6 +75,10 @@ output:
     id: backlight_output
     pin: GPIO46
     frequency: 1000Hz
+  - platform: ledc
+    id: buzzer_output
+    pin: GPIO38
+    frequency: 1000Hz
 
 light:
   - platform: monochromatic
@@ -83,6 +87,36 @@ light:
     id: backlight
     default_transition_length: 0.5s
     restore_mode: ALWAYS_ON
+
+globals:
+  - id: alarm_hour
+    type: int
+    restore_value: yes
+    initial_value: '7'
+  - id: alarm_minute
+    type: int
+    restore_value: yes
+    initial_value: '0'
+  - id: alarm_enabled
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
+  - id: alarm_ringing
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
+rtttl:
+  output: buzzer_output
+  id: alarm_buzzer
+  gain: 70%
+  on_finished_playback:
+    - if:
+        condition:
+          lambda: 'return id(alarm_ringing);'
+        then:
+          - delay: 15s
+          - rtttl.play: 'Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c'
 
 time:
   - platform: sntp
