@@ -12,7 +12,7 @@ Vom blanken LilyGo T-RGB Board zum vollstaendigen ESPHome-Wecker in 4 Phasen: Zu
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Board und Digitale Uhr** - ESPHome-Grundkonfiguration, Display-Treiber, NTP-Sync, digitale Zeitanzeige
+- [x] **Phase 1: Board und Digitale Uhr** - ESPHome-Grundkonfiguration, Display-Treiber, NTP-Sync, digitale Zeitanzeige (completed 2026-03-24)
 - [ ] **Phase 2: Alarm-Kernfunktion** - Alarm-Logik, RTTTL-Buzzer, Snooze, Touch-Bedienung am Display
 - [ ] **Phase 3: Home Assistant Integration** - HA-Entities, Automatisierung, Helligkeit, Melodie-Auswahl
 - [ ] **Phase 4: Analoge Uhr und Seitenwechsel** - LVGL Meter-Widget, Touch-Navigation zwischen Zifferblaettern
@@ -86,7 +86,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Board und Digitale Uhr | 0/1 | Planning complete | - |
+| 1. Board und Digitale Uhr | 1/1 | Complete   | 2026-03-24 |
 | 2. Alarm-Kernfunktion | 0/3 | Not started | - |
 | 3. Home Assistant Integration | 0/2 | Not started | - |
 | 4. Analoge Uhr und Seitenwechsel | 0/1 | Not started | - |

@@ -7,10 +7,10 @@
 
 ### Zeit & Display
 
-- [ ] **TIME-01**: Uhrzeit wird automatisch per NTP ueber WLAN synchronisiert (Zeitzone Europe/Berlin)
-- [ ] **DISP-01**: Nutzer sieht digitale Uhrzeit auf dem runden Display (LVGL Label)
+- [x] **TIME-01**: Uhrzeit wird automatisch per NTP ueber WLAN synchronisiert (Zeitzone Europe/Berlin)
+- [x] **DISP-01**: Nutzer sieht digitale Uhrzeit auf dem runden Display (LVGL Label)
 - [ ] **DISP-02**: Nutzer sieht analoge Uhr mit Stunden-, Minuten- und Sekundenzeiger (LVGL Meter-Widget)
-- [ ] **DISP-03**: Nutzer sieht Datum und Wochentag auf dem Display
+- [x] **DISP-03**: Nutzer sieht Datum und Wochentag auf dem Display
 - [ ] **DISP-04**: Nutzer sieht wann der naechste Alarm ausgeloest wird
 - [ ] **DISP-05**: Nutzer sieht auf dem Display ob der Alarm aktiviert oder deaktiviert ist
 - [ ] **DISP-06**: Nutzer kann per Touch zwischen analogem und digitalem Zifferblatt wechseln
@@ -61,10 +61,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TIME-01 | Phase 1 | Pending |
-| DISP-01 | Phase 1 | Pending |
+| TIME-01 | Phase 1 | Complete |
+| DISP-01 | Phase 1 | Complete |
 | DISP-02 | Phase 4 | Pending |
-| DISP-03 | Phase 1 | Pending |
+| DISP-03 | Phase 1 | Complete |
 | DISP-04 | Phase 2 | Pending |
 | DISP-05 | Phase 2 | Pending |
 | DISP-06 | Phase 4 | Pending |
