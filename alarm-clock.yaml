@@ -185,7 +185,9 @@ lvgl:
   displays:
     - my_display
   touchscreens:
-    - my_touchscreen
+    - touchscreen_id: my_touchscreen
+      long_press_time: 600ms
+      long_press_repeat_time: never
   buffer_size: 25%
   pages:
     - id: digital_clock_page
@@ -207,3 +209,194 @@ lvgl:
             text:
               time_format: "%A, %d.%m.%Y"
               time: sntp_time
+        - button:
+            id: alarm_status_btn
+            width: 200
+            height: 60
+            align: CENTER
+            y: 80
+            bg_color: 0x000000
+            border_width: 0
+            shadow_width: 0
+            on_short_click:
+              - lambda: 'id(alarm_enabled) = !id(alarm_enabled);'
+              - lvgl.label.update:
+                  id: alarm_status_label
+                  text_color: !lambda |-
+                    return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
+            on_long_press:
+              - lvgl.page.show: alarm_settings_page
+            widgets:
+              - label:
+                  id: alarm_status_label
+                  align: CENTER
+                  text_font: montserrat_14
+                  text_color: 0x666666
+                  text: !lambda |-
+                    static char buf[16];
+                    snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                             id(alarm_hour), id(alarm_minute));
+                    return buf;
+
+    - id: alarm_settings_page
+      widgets:
+        - label:
+            id: settings_header_label
+            align: TOP_MID
+            y: 100
+            text_font: montserrat_24
+            text_color: 0xFFAA00
+            text: "Alarm einstellen"
+
+        - label:
+            id: hour_value_label
+            align: CENTER
+            x: -80
+            y: -10
+            text_font: montserrat_36
+            text_color: 0xFFFFFF
+            text: !lambda |-
+              static char buf[4];
+              snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
+              return buf;
+
+        - label:
+            id: colon_label
+            align: CENTER
+            x: 0
+            y: -10
+            text_font: montserrat_36
+            text_color: 0xCCCCCC
+            text: ":"
+
+        - label:
+            id: minute_value_label
+            align: CENTER
+            x: 80
+            y: -10
+            text_font: montserrat_36
+            text_color: 0xFFFFFF
+            text: !lambda |-
+              static char buf[4];
+              snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
+              return buf;
+
+        - button:
+            id: hour_plus_btn
+            align: CENTER
+            x: -80
+            y: -70
+            width: 80
+            height: 60
+            bg_color: 0x1A1A2E
+            border_width: 0
+            on_short_click:
+              - lambda: 'id(alarm_hour) = (id(alarm_hour) + 1) % 24;'
+              - lvgl.label.update:
+                  id: hour_value_label
+                  text: !lambda |-
+                    static char buf[4];
+                    snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
+                    return buf;
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: montserrat_24
+                  text_color: 0xFFFFFF
+                  text: "+"
+
+        - button:
+            id: hour_minus_btn
+            align: CENTER
+            x: -80
+            y: 50
+            width: 80
+            height: 60
+            bg_color: 0x1A1A2E
+            border_width: 0
+            on_short_click:
+              - lambda: 'id(alarm_hour) = (id(alarm_hour) + 23) % 24;'
+              - lvgl.label.update:
+                  id: hour_value_label
+                  text: !lambda |-
+                    static char buf[4];
+                    snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
+                    return buf;
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: montserrat_24
+                  text_color: 0xFFFFFF
+                  text: "-"
+
+        - button:
+            id: minute_plus_btn
+            align: CENTER
+            x: 80
+            y: -70
+            width: 80
+            height: 60
+            bg_color: 0x1A1A2E
+            border_width: 0
+            on_short_click:
+              - lambda: 'id(alarm_minute) = (id(alarm_minute) + 5) % 60;'
+              - lvgl.label.update:
+                  id: minute_value_label
+                  text: !lambda |-
+                    static char buf[4];
+                    snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
+                    return buf;
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: montserrat_24
+                  text_color: 0xFFFFFF
+                  text: "+"
+
+        - button:
+            id: minute_minus_btn
+            align: CENTER
+            x: 80
+            y: 50
+            width: 80
+            height: 60
+            bg_color: 0x1A1A2E
+            border_width: 0
+            on_short_click:
+              - lambda: 'id(alarm_minute) = (id(alarm_minute) + 55) % 60;'
+              - lvgl.label.update:
+                  id: minute_value_label
+                  text: !lambda |-
+                    static char buf[4];
+                    snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
+                    return buf;
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: montserrat_24
+                  text_color: 0xFFFFFF
+                  text: "-"
+
+        - button:
+            id: settings_back_btn
+            align: BOTTOM_MID
+            y: -60
+            width: 200
+            height: 56
+            bg_color: 0x1A1A2E
+            border_width: 0
+            on_short_click:
+              - lvgl.label.update:
+                  id: alarm_status_label
+                  text: !lambda |-
+                    static char buf[16];
+                    snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                             id(alarm_hour), id(alarm_minute));
+                    return buf;
+              - lvgl.page.show: digital_clock_page
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: montserrat_24
+                  text_color: 0xFFFFFF
+                  text: "Zurueck"
