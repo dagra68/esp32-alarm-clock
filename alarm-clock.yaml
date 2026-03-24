@@ -88,6 +88,29 @@ light:
     default_transition_length: 0.5s
     restore_mode: ALWAYS_ON
 
+switch:
+  - platform: template
+    name: "Alarm aktiv"
+    id: alarm_enabled_switch
+    icon: mdi:alarm
+    restore_mode: DISABLED
+    lambda: |-
+      return id(alarm_enabled);
+    turn_on_action:
+      - globals.set:
+          id: alarm_enabled
+          value: 'true'
+      - lvgl.label.update:
+          id: alarm_status_label
+          text_color: 0xFFAA00
+    turn_off_action:
+      - globals.set:
+          id: alarm_enabled
+          value: 'false'
+      - lvgl.label.update:
+          id: alarm_status_label
+          text_color: 0x666666
+
 globals:
   - id: alarm_hour
     type: int
