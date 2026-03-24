@@ -68,6 +68,7 @@ display:
 touchscreen:
   - platform: ft5x06
     id: my_touchscreen
+    address: 0x38
     interrupt_pin: GPIO1
 
 output:
