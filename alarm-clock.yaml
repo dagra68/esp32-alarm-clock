@@ -180,6 +180,26 @@ time:
     on_time_sync:
       then:
         - logger.log: "NTP-Zeit synchronisiert"
+    on_time:
+      - seconds: 0
+        minutes: /1
+        then:
+          - lambda: |-
+              if (id(alarm_ringing)) return;
+              auto now = id(sntp_time).now();
+              if (!now.is_valid()) return;
+              bool is_weekday = (now.day_of_week >= 2 && now.day_of_week <= 6);
+              if (id(alarm_enabled) && is_weekday &&
+                  now.hour == id(alarm_hour) && now.minute == id(alarm_minute)) {
+                id(alarm_ringing) = true;
+                id(alarm_timeout_script).execute();
+              }
+          - if:
+              condition:
+                lambda: 'return id(alarm_ringing);'
+              then:
+                - rtttl.play: 'Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c'
+                - lvgl.page.show: alarm_ringing_page
 
 lvgl:
   displays:
@@ -400,3 +420,60 @@ lvgl:
                   text_font: montserrat_24
                   text_color: 0xFFFFFF
                   text: "Zurueck"
+
+    - id: alarm_ringing_page
+      widgets:
+        - label:
+            id: ringing_header_label
+            align: CENTER
+            y: -100
+            text_font: montserrat_48
+            text_color: 0xFFFFFF
+            text: "ALARM"
+
+        - label:
+            id: ringing_time_label
+            align: CENTER
+            y: -40
+            text_font: montserrat_36
+            text_color: 0xFFAA00
+            text: !lambda |-
+              static char buf[8];
+              snprintf(buf, sizeof(buf), "%02d:%02d", id(alarm_hour), id(alarm_minute));
+              return buf;
+
+        - button:
+            id: snooze_btn
+            align: CENTER
+            x: -90
+            y: 80
+            width: 160
+            height: 80
+            bg_color: 0xFFAA00
+            border_width: 0
+            on_short_click:
+              - script.execute: snooze_action
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: montserrat_24
+                  text_color: 0x000000
+                  text: "Snooze 5min"
+
+        - button:
+            id: stopp_btn
+            align: CENTER
+            x: 90
+            y: 80
+            width: 140
+            height: 80
+            bg_color: 0xFF3333
+            border_width: 0
+            on_short_click:
+              - script.execute: alarm_stop_action
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: montserrat_24
+                  text_color: 0xFFFFFF
+                  text: "Stopp"
