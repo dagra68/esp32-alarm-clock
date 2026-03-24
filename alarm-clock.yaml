@@ -118,6 +118,57 @@ rtttl:
           - delay: 15s
           - rtttl.play: 'Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c'
 
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+      ignore_strapping_warning: true
+    id: snooze_button
+    name: "Snooze Button"
+    internal: true
+    on_press:
+      - if:
+          condition:
+            lambda: 'return id(alarm_ringing);'
+          then:
+            - script.execute: snooze_action
+
+script:
+  - id: alarm_timeout_script
+    mode: restart
+    then:
+      - delay: 5min
+      - lambda: |-
+          id(alarm_ringing) = false;
+          id(alarm_enabled) = false;
+      - rtttl.stop:
+      - lvgl.page.show: digital_clock_page
+
+  - id: snooze_action
+    mode: restart
+    then:
+      - rtttl.stop:
+      - lambda: 'id(alarm_ringing) = false;'
+      - lvgl.page.show: digital_clock_page
+      - delay: 5min
+      - lambda: 'id(alarm_ringing) = true;'
+      - rtttl.play: 'Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c'
+      - lvgl.page.show: alarm_ringing_page
+      - script.execute: alarm_timeout_script
+
+  - id: alarm_stop_action
+    mode: single
+    then:
+      - rtttl.stop:
+      - lambda: |-
+          id(alarm_ringing) = false;
+          id(alarm_enabled) = false;
+      - lvgl.page.show: digital_clock_page
+
 time:
   - platform: sntp
     id: sntp_time
