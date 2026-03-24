@@ -509,6 +509,19 @@ lvgl:
                   text_color: 0xFFFFFF
                   text: "-"
 
+        - slider:
+            id: brightness_slider
+            align: BOTTOM_MID
+            y: -130
+            width: 200
+            height: 30
+            min_value: 10
+            max_value: 100
+            on_value:
+              - light.turn_on:
+                  id: backlight
+                  brightness: !lambda 'return x / 100.0;'
+
         - button:
             id: settings_back_btn
             align: BOTTOM_MID
