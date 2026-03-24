@@ -194,6 +194,46 @@ select:
           id: alarm_melody_name
           value: !lambda 'return x;'
 
+  - platform: template
+    name: "Zifferblatt"
+    id: clock_face_select
+    icon: mdi:clock-outline
+    options:
+      - "Digital"
+      - "Analog"
+    initial_option: "Digital"
+    optimistic: true
+    set_action:
+      - if:
+          condition:
+            lambda: 'return x == "Analog";'
+          then:
+            - script.execute: analog_time_update
+            - lvgl.page.show: analog_clock_page
+          else:
+            - lvgl.page.show: digital_clock_page
+
+  - platform: template
+    name: "Hintergrundfarbe"
+    id: bg_color_select
+    icon: mdi:palette
+    options:
+      - "Pink"
+      - "Weiss"
+      - "Schwarz"
+      - "Dunkelblau"
+    initial_option: "Pink"
+    optimistic: true
+    set_action:
+      - lambda: |-
+          if (x == "Pink") id(bg_color_hex) = 0xFF69B4;
+          else if (x == "Weiss") id(bg_color_hex) = 0xFFFFFF;
+          else if (x == "Schwarz") id(bg_color_hex) = 0x000000;
+          else if (x == "Dunkelblau") id(bg_color_hex) = 0x1A1A2E;
+      - lvgl.widget.update:
+          id: analog_clock_bg
+          bg_color: !lambda 'return lv_color_hex(id(bg_color_hex));'
+
 rtttl:
   output: buzzer_output
   id: alarm_buzzer
