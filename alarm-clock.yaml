@@ -173,6 +173,10 @@ globals:
     restore_value: yes
     max_restore_data_length: 64
     initial_value: '"Reveille"'
+  - id: bg_color_hex
+    type: int
+    restore_value: yes
+    initial_value: '0xFF69B4'
 
 select:
   - platform: template
@@ -263,6 +267,17 @@ script:
           id(alarm_enabled) = false;
       - lvgl.page.show: digital_clock_page
 
+  - id: analog_time_update
+    then:
+      - lvgl.indicator.update:
+          id: minute_hand
+          value: !lambda 'return id(sntp_time).now().minute;'
+      - lvgl.indicator.update:
+          id: hour_hand
+          value: !lambda |-
+            auto now = id(sntp_time).now();
+            return std::fmod(now.hour, 12) * 60 + now.minute;
+
 time:
   - platform: sntp
     id: sntp_time
@@ -299,6 +314,11 @@ time:
                       return std::string("FrereJacques:d=4,o=5,b=126:c,d,e,c,c,d,e,c,e,f,2g,e,f,2g");
                     return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
                 - lvgl.page.show: alarm_ringing_page
+          - if:
+              condition:
+                lvgl.page.is_showing: analog_clock_page
+              then:
+                - script.execute: analog_time_update
 
 lvgl:
   displays:
@@ -578,3 +598,67 @@ lvgl:
                   text_font: montserrat_24
                   text_color: 0xFFFFFF
                   text: "Stopp"
+
+    - id: analog_clock_page
+      widgets:
+        - obj:
+            id: analog_clock_bg
+            width: 480
+            height: 480
+            align: CENTER
+            bg_color: 0xFF69B4
+            border_width: 0
+            pad_all: 0
+            widgets:
+              - meter:
+                  id: analog_meter
+                  height: 400
+                  width: 400
+                  align: CENTER
+                  bg_opa: TRANSP
+                  border_width: 0
+                  text_color: 0x000000
+                  scales:
+                    - range_from: 0
+                      range_to: 60
+                      angle_range: 360
+                      rotation: 270
+                      ticks:
+                        width: 1
+                        count: 61
+                        length: 10
+                        color: 0x000000
+                      indicators:
+                        - line:
+                            id: minute_hand
+                            width: 3
+                            color: 0x000000
+                            r_mod: -4
+                            value: 0
+                    - range_from: 1
+                      range_to: 12
+                      angle_range: 330
+                      rotation: 300
+                      ticks:
+                        width: 1
+                        count: 12
+                        length: 1
+                        major:
+                          stride: 1
+                          width: 4
+                          length: 10
+                          color: 0x000000
+                          label_gap: 14
+                    - range_from: 0
+                      range_to: 720
+                      angle_range: 360
+                      rotation: 270
+                      ticks:
+                        count: 0
+                      indicators:
+                        - line:
+                            id: hour_hand
+                            width: 5
+                            color: 0x000000
+                            r_mod: -50
+                            value: 0
