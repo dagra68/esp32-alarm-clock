@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Board und Digitale Uhr | 1/1 | Complete   | 2026-03-24 |
-| 2. Alarm-Kernfunktion | 1/3 | In Progress|  |
+| 2. Alarm-Kernfunktion | 2/3 | In Progress|  |
 | 3. Home Assistant Integration | 0/2 | Not started | - |
 | 4. Analoge Uhr und Seitenwechsel | 1/1 | Complete    | 2026-03-25 |

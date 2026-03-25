@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Phase 4 abgeschlossen -- Phasen 2+3 offen
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-03-25T17:49:13.869Z"
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-03-25T18:26:49.667Z"
 last_activity: 2026-03-25 -- Plan 04-01 abgeschlossen, Analog-Uhr laeuft auf Board
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 60
 ---
 
@@ -78,6 +78,7 @@ Progress: [█████░░░░░] 50% (Phase 1 + Phase 4 von 4 Phasen)
 
 *Updated after each plan completion*
 | Phase 02-alarm-kernfunktion P02 | 62 | 3 tasks | 1 files |
+| Phase 02-alarm-kernfunktion P01 | 15 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -100,6 +101,8 @@ Recent decisions affecting current work:
 - [Phase 04-analoge-uhr-und-seitenwechsel]: Alarm-Button direkt auf Analog-Seite fuer schnellen Zugriff
 - [Phase 02-alarm-kernfunktion]: weekday_only Global + Template-Switch: konfigurierbarer Mo-Fr-Filter statt hardcodierter Lambda-Bedingung
 - [Phase 02-alarm-kernfunktion]: RESTORE_DEFAULT_ON fuer weekday_only_switch: sicheres Default (nur Mo-Fr) nach Reboot ohne gespeicherten Zustand
+- [Phase 02-alarm-kernfunktion]: Scope Change: I2S MAX98357A verworfen -- LEDC Piezo-Buzzer auf GPIO4 statt GPIO38 (kein freier I2S-faehiger GPIO am T-RGB Board)
+- [Phase 02-alarm-kernfunktion]: GPIO0 binary_sensor entfernt (Boot-Strapping-Pin) -- Snooze nur noch per Touch-Button
 
 ### Pending Todos
 
@@ -111,6 +114,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T17:49:13.864Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-03-25T18:26:49.663Z
+Stopped at: Completed 02-01-PLAN.md
 Resume: /gsd:plan-phase 2 -- Kontext gesammelt, bereit zum Planen
