@@ -734,8 +734,8 @@ lvgl:
                             value: 0
               - button:
                   id: analog_alarm_btn
-                  width: 192
-                  height: 54
+                  width: 154
+                  height: 64
                   align: CENTER
                   y: 100
                   bg_color: 0x000000
@@ -758,7 +758,7 @@ lvgl:
                     - label:
                         id: analog_alarm_label
                         align: CENTER
-                        text_font: montserrat_24
+                        text_font: montserrat_28
                         text_color: 0x666666
                         text: !lambda |-
                           static char buf[16];
