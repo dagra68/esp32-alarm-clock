@@ -182,6 +182,10 @@ globals:
     type: int
     restore_value: yes
     initial_value: '0xFF69B4'
+  - id: weekday_only
+    type: bool
+    restore_value: yes
+    initial_value: 'true'
 
 select:
   - platform: template
