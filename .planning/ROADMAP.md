@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Board und Digitale Uhr** - ESPHome-Grundkonfiguration, Display-Treiber, NTP-Sync, digitale Zeitanzeige (completed 2026-03-24)
 - [ ] **Phase 2: Alarm-Kernfunktion** - Alarm-Logik, RTTTL-Buzzer, Snooze, Touch-Bedienung am Display
 - [ ] **Phase 3: Home Assistant Integration** - HA-Entities, Automatisierung, Helligkeit, Melodie-Auswahl
-- [ ] **Phase 4: Analoge Uhr und Seitenwechsel** - LVGL Meter-Widget, HA-gesteuerter Seitenwechsel
+- [x] **Phase 4: Analoge Uhr und Seitenwechsel** - LVGL Meter-Widget, HA-gesteuerter Seitenwechsel (completed 2026-03-25)
 
 ## Phase Details
 
@@ -77,7 +77,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md -- Analog-Uhr-Seite mit Meter-Widget, Select-Entities fuer Seitenwechsel und Farbauswahl
+- [x] 04-01-PLAN.md -- Analog-Uhr-Seite mit Meter-Widget, Select-Entities fuer Seitenwechsel und Farbauswahl
 
 ## Progress
 
@@ -89,4 +89,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Board und Digitale Uhr | 1/1 | Complete   | 2026-03-24 |
 | 2. Alarm-Kernfunktion | 0/3 | Not started | - |
 | 3. Home Assistant Integration | 0/2 | Not started | - |
-| 4. Analoge Uhr und Seitenwechsel | 0/1 | Not started | - |
+| 4. Analoge Uhr und Seitenwechsel | 1/1 | Complete | 2026-03-25 |
