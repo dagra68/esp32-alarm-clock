@@ -83,7 +83,7 @@ output:
     frequency: 1000Hz
   - platform: ledc
     id: buzzer_output
-    pin: GPIO38
+    pin: GPIO4
     frequency: 1000Hz
 
 light:
