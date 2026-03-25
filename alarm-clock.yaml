@@ -658,7 +658,7 @@ lvgl:
                   bg_opa: TRANSP
                   border_width: 0
                   text_color: 0x000000
-                  text_font: montserrat_28
+                  text_font: montserrat_24
                   scales:
                     - range_from: 0
                       range_to: 60
