@@ -137,10 +137,24 @@ switch:
       - globals.set:
           id: weekday_only
           value: 'true'
+      - lvgl.label.update:
+          id: analog_alarm_label
+          text: !lambda |-
+            static char buf[24];
+            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d Mo-Fr",
+                     id(alarm_hour), id(alarm_minute));
+            return buf;
     turn_off_action:
       - globals.set:
           id: weekday_only
           value: 'false'
+      - lvgl.label.update:
+          id: analog_alarm_label
+          text: !lambda |-
+            static char buf[24];
+            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                     id(alarm_hour), id(alarm_minute));
+            return buf;
 
 datetime:
   - platform: template
@@ -164,9 +178,14 @@ datetime:
       - lvgl.label.update:
           id: analog_alarm_label
           text: !lambda |-
-            static char buf[16];
-            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
-                     id(alarm_hour), id(alarm_minute));
+            static char buf[24];
+            if (id(weekday_only)) {
+              snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d Mo-Fr",
+                       id(alarm_hour), id(alarm_minute));
+            } else {
+              snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                       id(alarm_hour), id(alarm_minute));
+            }
             return buf;
       - lvgl.label.update:
           id: hour_value_label
@@ -426,6 +445,7 @@ lvgl:
                     static char buf[4];
                     snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
                     return buf;
+              - component.update: alarm_time
             widgets:
               - label:
                   align: CENTER
@@ -450,6 +470,7 @@ lvgl:
                     static char buf[4];
                     snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
                     return buf;
+              - component.update: alarm_time
             widgets:
               - label:
                   align: CENTER
@@ -474,6 +495,7 @@ lvgl:
                     static char buf[4];
                     snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
                     return buf;
+              - component.update: alarm_time
             widgets:
               - label:
                   align: CENTER
@@ -498,6 +520,7 @@ lvgl:
                     static char buf[4];
                     snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
                     return buf;
+              - component.update: alarm_time
             widgets:
               - label:
                   align: CENTER
@@ -517,9 +540,14 @@ lvgl:
               - lvgl.label.update:
                   id: analog_alarm_label
                   text: !lambda |-
-                    static char buf[16];
-                    snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
-                             id(alarm_hour), id(alarm_minute));
+                    static char buf[24];
+                    if (id(weekday_only)) {
+                      snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d Mo-Fr",
+                               id(alarm_hour), id(alarm_minute));
+                    } else {
+                      snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                               id(alarm_hour), id(alarm_minute));
+                    }
                     return buf;
               - lvgl.page.show: analog_clock_page
             widgets:
@@ -685,7 +713,12 @@ lvgl:
                         text_font: montserrat_28
                         text_color: 0x666666
                         text: !lambda |-
-                          static char buf[16];
-                          snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
-                                   id(alarm_hour), id(alarm_minute));
+                          static char buf[24];
+                          if (id(weekday_only)) {
+                            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d Mo-Fr",
+                                     id(alarm_hour), id(alarm_minute));
+                          } else {
+                            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                                     id(alarm_hour), id(alarm_minute));
+                          }
                           return buf;
