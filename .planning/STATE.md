@@ -3,11 +3,27 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Phase 4 abgeschlossen -- Phasen 2+3 offen
+stopped_at: "Checkpoint: Task 4 OTA-Flash + Board-Verifikation 02-04"
+last_updated: "2026-03-25T20:44:26.037Z"
+last_activity: 2026-03-25 -- Plan 02-03 abgeschlossen, Board-Verifikation mit 3 Gaps
+progress:
+  total_phases: 4
+  completed_phases: 3
+  total_plans: 6
+  completed_plans: 6
+  percent: 100
+---
+
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: Phase 4 abgeschlossen -- Phasen 2+3 offen
 stopped_at: Completed 02-01-PLAN.md
 last_updated: "2026-03-25T18:26:49.667Z"
 last_activity: 2026-03-25 -- Plan 04-01 abgeschlossen, Analog-Uhr laeuft auf Board
 progress:
-  total_phases: 4
+  [██████████] 100%
   completed_phases: 2
   total_plans: 5
   completed_plans: 4
@@ -79,6 +95,7 @@ Progress: [█████░░░░░] 50% (Phase 1 + Phase 4 von 4 Phasen -
 *Updated after each plan completion*
 | Phase 02-alarm-kernfunktion P02 | 62 | 3 tasks | 1 files |
 | Phase 02-alarm-kernfunktion P01 | 15 | 2 tasks | 1 files |
+| Phase 02-alarm-kernfunktion P04 | 33 | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -107,6 +124,8 @@ Recent decisions affecting current work:
 - [Phase 02-alarm-kernfunktion]: Board-Verifikation 02-03 -- GAP-2: Alarmzeit-Aenderung per Touch nicht in HA gespiegelt (ALRM-01 partial)
 - [Phase 02-alarm-kernfunktion]: Board-Verifikation 02-03 -- GAP-3: weekday_only-Status nicht auf Display sichtbar (ALRM-06 partial)
 - [Phase 02-alarm-kernfunktion]: ALRM-03 (Piezo-Ton) deferred -- Hardware noch nicht angeschlossen
+- [Phase 02-alarm-kernfunktion]: alarm_ringing_page bg-Widget: clickable:false obj als erster Widget-Eintrag fuer LVGL Touch-Event-Routing
+- [Phase 02-alarm-kernfunktion]: I2S-Pins GPIO38/39/40 statt GPIO5/6/7: mipi_rgb Display blockiert GPIO5/6/7 intern
 
 ### Pending Todos
 
@@ -118,6 +137,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T18:26:49.663Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-03-25T20:44:26.034Z
+Stopped at: Checkpoint: Task 4 OTA-Flash + Board-Verifikation 02-04
 Resume: Fix-Plan fuer GAP-1 (Snooze/Stopp-Buttons alarm_ringing_page) erstellen -- ALRM-04, ALRM-05
