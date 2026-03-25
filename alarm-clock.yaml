@@ -109,12 +109,18 @@ switch:
       - lvgl.label.update:
           id: alarm_status_label
           text_color: 0xFFAA00
+      - lvgl.label.update:
+          id: analog_alarm_label
+          text_color: 0xFFAA00
     turn_off_action:
       - globals.set:
           id: alarm_enabled
           value: 'false'
       - lvgl.label.update:
           id: alarm_status_label
+          text_color: 0x666666
+      - lvgl.label.update:
+          id: analog_alarm_label
           text_color: 0x666666
 
 datetime:
@@ -138,6 +144,13 @@ datetime:
           value: !lambda 'return (int)x.minute;'
       - lvgl.label.update:
           id: alarm_status_label
+          text: !lambda |-
+            static char buf[16];
+            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                     id(alarm_hour), id(alarm_minute));
+            return buf;
+      - lvgl.label.update:
+          id: analog_alarm_label
           text: !lambda |-
             static char buf[16];
             snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
@@ -409,6 +422,10 @@ lvgl:
                   id: alarm_status_label
                   text_color: !lambda |-
                     return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
+              - lvgl.label.update:
+                  id: analog_alarm_label
+                  text_color: !lambda |-
+                    return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
             on_long_press:
               - lvgl.page.show: alarm_settings_page
             widgets:
@@ -579,6 +596,13 @@ lvgl:
                     snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
                              id(alarm_hour), id(alarm_minute));
                     return buf;
+              - lvgl.label.update:
+                  id: analog_alarm_label
+                  text: !lambda |-
+                    static char buf[16];
+                    snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                             id(alarm_hour), id(alarm_minute));
+                    return buf;
               - lvgl.page.show: digital_clock_page
             widgets:
               - label:
@@ -663,7 +687,7 @@ lvgl:
                   bg_opa: TRANSP
                   border_width: 0
                   text_color: 0x000000
-                  text_font: montserrat_24
+                  text_font: montserrat_48
                   scales:
                     - range_from: 0
                       range_to: 60
@@ -694,7 +718,7 @@ lvgl:
                           width: 4
                           length: 10
                           color: 0x000000
-                          label_gap: 35
+                          label_gap: 58
                     - range_from: 0
                       range_to: 720
                       angle_range: 360
@@ -708,3 +732,36 @@ lvgl:
                             color: 0x000000
                             r_mod: -50
                             value: 0
+              - button:
+                  id: analog_alarm_btn
+                  width: 320
+                  height: 90
+                  align: BOTTOM_MID
+                  y: -20
+                  bg_color: 0x000000
+                  bg_opa: 70%
+                  border_width: 0
+                  shadow_width: 0
+                  on_short_click:
+                    - lambda: 'id(alarm_enabled) = !id(alarm_enabled);'
+                    - lvgl.label.update:
+                        id: alarm_status_label
+                        text_color: !lambda |-
+                          return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
+                    - lvgl.label.update:
+                        id: analog_alarm_label
+                        text_color: !lambda |-
+                          return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
+                  on_long_press:
+                    - lvgl.page.show: alarm_settings_page
+                  widgets:
+                    - label:
+                        id: analog_alarm_label
+                        align: CENTER
+                        text_font: montserrat_48
+                        text_color: 0x666666
+                        text: !lambda |-
+                          static char buf[16];
+                          snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                                   id(alarm_hour), id(alarm_minute));
+                          return buf;
