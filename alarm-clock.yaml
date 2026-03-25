@@ -81,10 +81,19 @@ output:
     id: backlight_output
     pin: GPIO46
     frequency: 1000Hz
-  - platform: ledc
-    id: buzzer_output
-    pin: GPIO4
-    frequency: 1000Hz
+
+i2s_audio:
+  i2s_lrclk_pin: GPIO39
+  i2s_bclk_pin: GPIO38
+
+speaker:
+  - platform: i2s_audio
+    id: alarm_speaker
+    dac_type: external
+    i2s_dout_pin: GPIO40
+    channel: mono
+    sample_rate: 16000
+    bits_per_sample: 16bit
 
 light:
   - platform: monochromatic
@@ -241,9 +250,9 @@ select:
           bg_color: !lambda 'return lv_color_hex(id(bg_color_hex));'
 
 rtttl:
-  output: buzzer_output
+  speaker: alarm_speaker
   id: alarm_buzzer
-  gain: 70%
+  gain: 0.8
   on_finished_playback:
     - if:
         condition:
