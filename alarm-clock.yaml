@@ -201,7 +201,7 @@ select:
     options:
       - "Digital"
       - "Analog"
-    initial_option: "Digital"
+    initial_option: "Analog"
     optimistic: true
     set_action:
       - if:
@@ -652,12 +652,13 @@ lvgl:
             widgets:
               - meter:
                   id: analog_meter
-                  height: 400
-                  width: 400
+                  height: 480
+                  width: 480
                   align: CENTER
                   bg_opa: TRANSP
                   border_width: 0
                   text_color: 0x000000
+                  text_font: montserrat_28
                   scales:
                     - range_from: 0
                       range_to: 60
