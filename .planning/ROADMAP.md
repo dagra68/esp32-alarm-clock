@@ -34,21 +34,21 @@ Plans:
 - [x] 01-01-PLAN.md -- Board-Setup, Display, NTP, LVGL digitale Uhr mit Datum
 
 ### Phase 2: Alarm-Kernfunktion
-**Goal**: Nutzer wird Mo-Fr zur eingestellten Zeit durch RTTTL-Melodie geweckt und kann per Touch und physischer Taste reagieren
+**Goal**: Nutzer wird Mo-Fr zur eingestellten Zeit durch RTTTL-Melodie geweckt und kann per Touch reagieren
 **Depends on**: Phase 1
 **Requirements**: ALRM-01, ALRM-02, ALRM-03, ALRM-04, ALRM-05, ALRM-06, DISP-04, DISP-05
 **Success Criteria** (what must be TRUE):
   1. Nutzer kann eine Alarmzeit (Stunde + Minute) direkt am Touch-Display einstellen
-  2. Alarm loest Mo-Fr zur konfigurierten Zeit eine RTTTL-Melodie ueber den Piezo-Buzzer aus
-  3. Nutzer kann per physischer Taste 5 Minuten Snooze ausloesen (Alarm pausiert und klingelt erneut)
+  2. Alarm loest Mo-Fr (oder jeden Tag per HA-Switch) zur konfigurierten Zeit eine RTTTL-Melodie ueber I2S-Lautsprecher aus
+  3. Nutzer kann per Touch-Button 5 Minuten Snooze ausloesen (Alarm pausiert und klingelt erneut)
   4. Nutzer kann den aktiven Alarm per Touch dauerhaft ausschalten
   5. Display zeigt Alarm-Status (ein/aus) und naechste Alarmzeit an
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md -- I2S-Audio-Migration (LEDC->I2S) und GPIO0-Sensor entfernen
+- [ ] 02-02-PLAN.md -- weekday_only Switch ergaenzen und on_time Lambda refactoren
+- [ ] 02-03-PLAN.md -- OTA-Flash und Board-Verifikation aller Alarm-Funktionen
 
 ### Phase 3: Home Assistant Integration
 **Goal**: Nutzer kann den Wecker vollstaendig ueber Home Assistant fernsteuern und automatisieren
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Board und Digitale Uhr | 1/1 | Complete   | 2026-03-24 |
-| 2. Alarm-Kernfunktion | 0/3 | Not started | - |
+| 2. Alarm-Kernfunktion | 0/3 | Ready to execute | - |
 | 3. Home Assistant Integration | 0/2 | Not started | - |
 | 4. Analoge Uhr und Seitenwechsel | 1/1 | Complete    | 2026-03-25 |
