@@ -107,18 +107,12 @@ switch:
           id: alarm_enabled
           value: 'true'
       - lvgl.label.update:
-          id: alarm_status_label
-          text_color: 0xFFAA00
-      - lvgl.label.update:
           id: analog_alarm_label
           text_color: 0xFFAA00
     turn_off_action:
       - globals.set:
           id: alarm_enabled
           value: 'false'
-      - lvgl.label.update:
-          id: alarm_status_label
-          text_color: 0x666666
       - lvgl.label.update:
           id: analog_alarm_label
           text_color: 0x666666
@@ -142,13 +136,6 @@ datetime:
       - globals.set:
           id: alarm_minute
           value: !lambda 'return (int)x.minute;'
-      - lvgl.label.update:
-          id: alarm_status_label
-          text: !lambda |-
-            static char buf[16];
-            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
-                     id(alarm_hour), id(alarm_minute));
-            return buf;
       - lvgl.label.update:
           id: analog_alarm_label
           text: !lambda |-
@@ -211,25 +198,6 @@ select:
       - globals.set:
           id: alarm_melody_name
           value: !lambda 'return x;'
-
-  - platform: template
-    name: "Zifferblatt"
-    id: clock_face_select
-    icon: mdi:clock-outline
-    options:
-      - "Digital"
-      - "Analog"
-    initial_option: "Analog"
-    optimistic: true
-    set_action:
-      - if:
-          condition:
-            lambda: 'return x == "Analog";'
-          then:
-            - script.execute: analog_time_update
-            - lvgl.page.show: analog_clock_page
-          else:
-            - lvgl.page.show: digital_clock_page
 
   - platform: template
     name: "Hintergrundfarbe"
@@ -297,14 +265,14 @@ script:
           id(alarm_ringing) = false;
           id(alarm_enabled) = false;
       - rtttl.stop:
-      - lvgl.page.show: digital_clock_page
+      - lvgl.page.show: analog_clock_page
 
   - id: snooze_action
     mode: restart
     then:
       - rtttl.stop:
       - lambda: 'id(alarm_ringing) = false;'
-      - lvgl.page.show: digital_clock_page
+      - lvgl.page.show: analog_clock_page
       - delay: 5min
       - lambda: 'id(alarm_ringing) = true;'
       - rtttl.play: !lambda |-
@@ -323,7 +291,7 @@ script:
       - lambda: |-
           id(alarm_ringing) = false;
           id(alarm_enabled) = false;
-      - lvgl.page.show: digital_clock_page
+      - lvgl.page.show: analog_clock_page
 
   - id: analog_time_update
     then:
@@ -387,59 +355,6 @@ lvgl:
       long_press_repeat_time: 65535ms
   buffer_size: 25%
   pages:
-    - id: digital_clock_page
-      bg_color: 0xFF69B4
-      widgets:
-        - label:
-            id: time_label
-            align: CENTER
-            text_font: montserrat_48
-            text_color: 0xFFFFFF
-            text:
-              time_format: "%H:%M"
-              time: sntp_time
-        - label:
-            id: date_label
-            align: CENTER
-            y: 40
-            text_font: montserrat_14
-            text_color: 0xCCCCCC
-            text:
-              time_format: "%A, %d.%m.%Y"
-              time: sntp_time
-        - button:
-            id: alarm_status_btn
-            width: 200
-            height: 60
-            align: CENTER
-            y: 80
-            bg_color: 0x000000
-            border_width: 0
-            shadow_width: 0
-            on_short_click:
-              - lambda: 'id(alarm_enabled) = !id(alarm_enabled);'
-              - lvgl.label.update:
-                  id: alarm_status_label
-                  text_color: !lambda |-
-                    return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
-              - lvgl.label.update:
-                  id: analog_alarm_label
-                  text_color: !lambda |-
-                    return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
-            on_long_press:
-              - lvgl.page.show: alarm_settings_page
-            widgets:
-              - label:
-                  id: alarm_status_label
-                  align: CENTER
-                  text_font: montserrat_14
-                  text_color: 0x666666
-                  text: !lambda |-
-                    static char buf[16];
-                    snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
-                             id(alarm_hour), id(alarm_minute));
-                    return buf;
-
     - id: alarm_settings_page
       bg_color: 0xFF69B4
       widgets:
@@ -590,20 +505,13 @@ lvgl:
             border_width: 0
             on_short_click:
               - lvgl.label.update:
-                  id: alarm_status_label
-                  text: !lambda |-
-                    static char buf[16];
-                    snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
-                             id(alarm_hour), id(alarm_minute));
-                    return buf;
-              - lvgl.label.update:
                   id: analog_alarm_label
                   text: !lambda |-
                     static char buf[16];
                     snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
                              id(alarm_hour), id(alarm_minute));
                     return buf;
-              - lvgl.page.show: digital_clock_page
+              - lvgl.page.show: analog_clock_page
             widgets:
               - label:
                   align: CENTER
@@ -744,10 +652,6 @@ lvgl:
                   shadow_width: 0
                   on_short_click:
                     - lambda: 'id(alarm_enabled) = !id(alarm_enabled);'
-                    - lvgl.label.update:
-                        id: alarm_status_label
-                        text_color: !lambda |-
-                          return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
                     - lvgl.label.update:
                         id: analog_alarm_label
                         text_color: !lambda |-
