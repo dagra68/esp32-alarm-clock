@@ -257,25 +257,6 @@ rtttl:
                 return std::string("FrereJacques:d=4,o=5,b=126:c,d,e,c,c,d,e,c,e,f,2g,e,f,2g");
               return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
 
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO0
-      mode:
-        input: true
-        pullup: true
-      inverted: true
-      ignore_strapping_warning: true
-    id: snooze_button
-    name: "Snooze Button"
-    internal: true
-    on_press:
-      - if:
-          condition:
-            lambda: 'return id(alarm_ringing);'
-          then:
-            - script.execute: snooze_action
-
 script:
   - id: alarm_timeout_script
     mode: restart
