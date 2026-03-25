@@ -3,11 +3,27 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Phase 4 abgeschlossen -- Phasen 2+3 offen
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-25T17:49:13.869Z"
+last_activity: 2026-03-25 -- Plan 04-01 abgeschlossen, Analog-Uhr laeuft auf Board
+progress:
+  total_phases: 4
+  completed_phases: 2
+  total_plans: 5
+  completed_plans: 3
+  percent: 60
+---
+
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: Phase 4 abgeschlossen -- Phasen 2+3 offen
 stopped_at: Completed 04-01-PLAN.md
 last_updated: "2026-03-25T10:09:44.262Z"
 last_activity: 2026-03-25 -- Plan 04-01 abgeschlossen, Analog-Uhr laeuft auf Board
 progress:
-  total_phases: 4
+  [██████░░░░] 60%
   completed_phases: 2
   total_plans: 2
   completed_plans: 2
@@ -35,7 +51,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Der Wecker weckt zuverlaessig an Wochentagen und laesst sich ueber Home Assistant automatisch an Feiertagen stumm schalten.
-**Current focus:** Phase 2: Alarm-Kernfunktion (naechste Phase zum Planen)
+**Current focus:** Phase 2: Alarm-Kernfunktion (Kontext gesammelt, bereit zum Planen)
 
 ## Current Position
 
@@ -61,6 +77,7 @@ Progress: [█████░░░░░] 50% (Phase 1 + Phase 4 von 4 Phasen)
 | Phase 04-analoge-uhr-und-seitenwechsel P01 | multi-session | 3 tasks | 1 file |
 
 *Updated after each plan completion*
+| Phase 02-alarm-kernfunktion P02 | 62 | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -81,6 +98,8 @@ Recent decisions affecting current work:
 - [Phase 04-analoge-uhr-und-seitenwechsel]: Seitenwechsel nur ueber HA-Select, kein Touch-Trigger
 - [Phase 04-analoge-uhr-und-seitenwechsel]: Digital-Clock-Page komplett entfernt, Analog ist Standard
 - [Phase 04-analoge-uhr-und-seitenwechsel]: Alarm-Button direkt auf Analog-Seite fuer schnellen Zugriff
+- [Phase 02-alarm-kernfunktion]: weekday_only Global + Template-Switch: konfigurierbarer Mo-Fr-Filter statt hardcodierter Lambda-Bedingung
+- [Phase 02-alarm-kernfunktion]: RESTORE_DEFAULT_ON fuer weekday_only_switch: sicheres Default (nur Mo-Fr) nach Reboot ohne gespeicherten Zustand
 
 ### Pending Todos
 
@@ -88,11 +107,10 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Research] GPIO fuer Buzzer und physische Taste muss aus dem T-RGB Schaltplan identifiziert werden (Confidence: LOW)
-- [Research] Alternative Hardware (T-Circle-S3) als Backup falls GPIO-Situation aussichtslos
+- [Research] I2S-Pin-Nummern des T-RGB Boards aus Schaltplan/Pinout ermitteln (fuer MAX98357A Anschluss)
 
 ## Session Continuity
 
-Last session: 2026-03-25T10:05:00Z
-Stopped at: Completed 04-01-PLAN.md
-Resume: /gsd:plan-phase 2 -- Phase 2 (Alarm-Kernfunktion) planen
+Last session: 2026-03-25T17:49:13.864Z
+Stopped at: Completed 02-02-PLAN.md
+Resume: /gsd:plan-phase 2 -- Kontext gesammelt, bereit zum Planen
