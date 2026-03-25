@@ -343,8 +343,8 @@ time:
               if (id(alarm_ringing)) return;
               auto now = id(sntp_time).now();
               if (!now.is_valid()) return;
-              bool is_weekday = (now.day_of_week >= 2 && now.day_of_week <= 6);
-              if (id(alarm_enabled) && is_weekday &&
+              bool day_ok = !id(weekday_only) || (now.day_of_week >= 2 && now.day_of_week <= 6);
+              if (id(alarm_enabled) && day_ok &&
                   now.hour == id(alarm_hour) && now.minute == id(alarm_minute)) {
                 id(alarm_ringing) = true;
                 id(alarm_timeout_script).execute();
