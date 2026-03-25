@@ -1,6 +1,11 @@
 esphome:
   name: alarm-clock
   friendly_name: "Wecker"
+  on_boot:
+    priority: -100
+    then:
+      - lvgl.page.show: analog_clock_page
+      - script.execute: analog_time_update
   platformio_options:
     board_build.flash_mode: dio
 
@@ -689,7 +694,7 @@ lvgl:
                           width: 4
                           length: 10
                           color: 0x000000
-                          label_gap: 14
+                          label_gap: 35
                     - range_from: 0
                       range_to: 720
                       angle_range: 360
