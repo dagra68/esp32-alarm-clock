@@ -117,6 +117,22 @@ switch:
           id: analog_alarm_label
           text_color: 0x666666
 
+  - platform: template
+    name: "Nur Mo-Fr"
+    id: weekday_only_switch
+    icon: mdi:calendar-week
+    restore_mode: RESTORE_DEFAULT_ON
+    lambda: |-
+      return id(weekday_only);
+    turn_on_action:
+      - globals.set:
+          id: weekday_only
+          value: 'true'
+    turn_off_action:
+      - globals.set:
+          id: weekday_only
+          value: 'false'
+
 datetime:
   - platform: template
     name: "Alarmzeit"
