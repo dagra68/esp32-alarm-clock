@@ -46,9 +46,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- I2S-Audio-Migration (LEDC->I2S) und GPIO0-Sensor entfernen
-- [ ] 02-02-PLAN.md -- weekday_only Switch ergaenzen und on_time Lambda refactoren
-- [ ] 02-03-PLAN.md -- OTA-Flash und Board-Verifikation aller Alarm-Funktionen
+- [x] 02-01-PLAN.md -- I2S-Audio-Migration (LEDC->I2S) und GPIO0-Sensor entfernen
+- [x] 02-02-PLAN.md -- weekday_only Switch ergaenzen und on_time Lambda refactoren
+- [x] 02-03-PLAN.md -- OTA-Flash und Board-Verifikation (3 Gaps: Snooze/Stopp-Buttons, weekday_only-Display)
 
 ### Phase 3: Home Assistant Integration
 **Goal**: Nutzer kann den Wecker vollstaendig ueber Home Assistant fernsteuern und automatisieren
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Board und Digitale Uhr | 1/1 | Complete   | 2026-03-24 |
-| 2. Alarm-Kernfunktion | 2/3 | In Progress|  |
+| 2. Alarm-Kernfunktion | 3/3 | Gaps offen -- Fix-Plan empfohlen (ALRM-04, ALRM-05) | 2026-03-25 |
 | 3. Home Assistant Integration | 0/2 | Not started | - |
 | 4. Analoge Uhr und Seitenwechsel | 1/1 | Complete    | 2026-03-25 |

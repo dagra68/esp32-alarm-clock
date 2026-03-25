@@ -51,16 +51,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Der Wecker weckt zuverlaessig an Wochentagen und laesst sich ueber Home Assistant automatisch an Feiertagen stumm schalten.
-**Current focus:** Phase 2: Alarm-Kernfunktion (Kontext gesammelt, bereit zum Planen)
+**Current focus:** Phase 2: Alarm-Kernfunktion -- 02-03 abgeschlossen (Gaps: Snooze/Stopp-Buttons + weekday_only-Display)
 
 ## Current Position
 
-Phase: 4 of 4 ABGESCHLOSSEN -- naechste offene Phasen: Phase 2 (Alarm-Kernfunktion), Phase 3 (HA-Integration)
-Plan: 1/1 in Phase 4 (04-01 vollstaendig, alle 3 Tasks inkl. visueller Verifikation)
-Status: Phase 4 abgeschlossen -- Phasen 1+4 fertig, Phasen 2+3 offen
-Last activity: 2026-03-25 -- Plan 04-01 abgeschlossen, Analog-Uhr laeuft auf Board
+Phase: 2 (Alarm-Kernfunktion) -- Plan 02-03 abgeschlossen
+Plan: 3/3 in Phase 2 (02-01, 02-02, 02-03 vollstaendig -- Gaps dokumentiert)
+Status: Phase 2 teilweise -- GAP-1 (Snooze/Stopp) kritisch, Fix-Plan empfohlen vor Phase 3
+Last activity: 2026-03-25 -- Plan 02-03 abgeschlossen, Board-Verifikation mit 3 Gaps
 
-Progress: [█████░░░░░] 50% (Phase 1 + Phase 4 von 4 Phasen)
+Progress: [█████░░░░░] 50% (Phase 1 + Phase 4 von 4 Phasen -- Phase 2 Gaps offen)
 
 ## Performance Metrics
 
@@ -103,6 +103,10 @@ Recent decisions affecting current work:
 - [Phase 02-alarm-kernfunktion]: RESTORE_DEFAULT_ON fuer weekday_only_switch: sicheres Default (nur Mo-Fr) nach Reboot ohne gespeicherten Zustand
 - [Phase 02-alarm-kernfunktion]: Scope Change: I2S MAX98357A verworfen -- LEDC Piezo-Buzzer auf GPIO4 statt GPIO38 (kein freier I2S-faehiger GPIO am T-RGB Board)
 - [Phase 02-alarm-kernfunktion]: GPIO0 binary_sensor entfernt (Boot-Strapping-Pin) -- Snooze nur noch per Touch-Button
+- [Phase 02-alarm-kernfunktion]: Board-Verifikation 02-03 -- GAP-1 kritisch: Snooze/Stopp-Buttons auf alarm_ringing_page reagieren nicht (ALRM-04, ALRM-05)
+- [Phase 02-alarm-kernfunktion]: Board-Verifikation 02-03 -- GAP-2: Alarmzeit-Aenderung per Touch nicht in HA gespiegelt (ALRM-01 partial)
+- [Phase 02-alarm-kernfunktion]: Board-Verifikation 02-03 -- GAP-3: weekday_only-Status nicht auf Display sichtbar (ALRM-06 partial)
+- [Phase 02-alarm-kernfunktion]: ALRM-03 (Piezo-Ton) deferred -- Hardware noch nicht angeschlossen
 
 ### Pending Todos
 
@@ -115,5 +119,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-25T18:26:49.663Z
-Stopped at: Completed 02-01-PLAN.md
-Resume: /gsd:plan-phase 2 -- Kontext gesammelt, bereit zum Planen
+Stopped at: Completed 02-03-PLAN.md
+Resume: Fix-Plan fuer GAP-1 (Snooze/Stopp-Buttons alarm_ringing_page) erstellen -- ALRM-04, ALRM-05
