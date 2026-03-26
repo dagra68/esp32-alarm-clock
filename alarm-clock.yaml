@@ -7,6 +7,7 @@ esphome:
       - lvgl.page.show: analog_clock_page
       - script.execute: analog_time_update
       - script.execute: hand_style_apply
+      - script.execute: display_sleep_script
       - lvgl.label.update:
           id: hour_value_label
           text: !lambda |-
@@ -97,7 +98,10 @@ touchscreen:
   - platform: ft5x06
     id: my_touchscreen
     address: 0x38
-    update_interval: 500ms
+    update_interval: 50ms
+    on_touch:
+      - light.turn_on: backlight
+      - script.execute: display_sleep_script
 
 output:
   - platform: ledc
@@ -323,6 +327,12 @@ rtttl:
               return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
 
 script:
+  - id: display_sleep_script
+    mode: restart
+    then:
+      - delay: 3min
+      - light.turn_off: backlight
+
   - id: alarm_timeout_script
     mode: restart
     then:
