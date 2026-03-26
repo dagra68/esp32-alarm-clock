@@ -116,7 +116,10 @@ touchscreen:
     update_interval: 50ms   # schnelle Touch-Reaktion
     on_touch:
       # Jeder Touch: Display aufwecken + Timeout neu starten
-      - light.turn_on: backlight
+      - logger.log: "TOUCH: Display aufwecken"
+      - light.turn_on:
+          id: backlight
+          brightness: 100%
       - script.execute: display_sleep_script
 
 # ── Ausgänge ───────────────────────────────────────────────
@@ -360,13 +363,16 @@ rtttl:
 
 # ── Scripts ────────────────────────────────────────────────
 script:
-  # Display-Timeout: nach 3min Inaktivität Backlight ausschalten.
+  # Display-Timeout: nach 3min Inaktivität auf 1% dimmen.
+  # Komplett aus (turn_off) verhindert dass der FT5x06 Touches meldet.
   # mode: restart → jeder Touch setzt den Timer zurück.
   - id: display_sleep_script
     mode: restart
     then:
       - delay: 3min
-      - light.turn_off: backlight
+      - light.turn_on:
+          id: backlight
+          brightness: 1%
 
   # Alarm-Timeout: nach 5min automatisch stoppen (Überschlafen verhindern).
   - id: alarm_timeout_script
