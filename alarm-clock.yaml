@@ -276,9 +276,6 @@ select:
       - "Rot"
       - "Gold"
       - "Neon"
-      - "Pfeil"
-      - "Raute"
-      - "Dreieck"
     initial_option: "Klassisch"
     optimistic: true
     restore_value: true
@@ -308,32 +305,6 @@ select:
       - lvgl.widget.update:
           id: analog_clock_bg
           bg_color: !lambda 'return lv_color_hex(id(bg_color_hex));'
-
-image:
-  - file: needles/minute_pfeil.png
-    id: img_minute_pfeil
-    type: RGB
-    transparency: alpha_channel
-  - file: needles/hour_pfeil.png
-    id: img_hour_pfeil
-    type: RGB
-    transparency: alpha_channel
-  - file: needles/minute_raute.png
-    id: img_minute_raute
-    type: RGB
-    transparency: alpha_channel
-  - file: needles/hour_raute.png
-    id: img_hour_raute
-    type: RGB
-    transparency: alpha_channel
-  - file: needles/minute_dreieck.png
-    id: img_minute_dreieck
-    type: RGB
-    transparency: alpha_channel
-  - file: needles/hour_dreieck.png
-    id: img_hour_dreieck
-    type: RGB
-    transparency: alpha_channel
 
 rtttl:
   output: buzzer_output
@@ -390,90 +361,45 @@ script:
 
   - id: analog_time_update
     then:
-      - lambda: |-
-          auto now = id(sntp_time).now();
-          int min_val = now.minute;
-          int hr_val  = (int)std::fmod((float)now.hour, 12.0f) * 60 + now.minute;
-          lv_meter_set_indicator_value(id(analog_meter), id(minute_hand),        min_val);
-          lv_meter_set_indicator_value(id(analog_meter), id(minute_pfeil_ind),   min_val);
-          lv_meter_set_indicator_value(id(analog_meter), id(minute_raute_ind),   min_val);
-          lv_meter_set_indicator_value(id(analog_meter), id(minute_dreieck_ind), min_val);
-          lv_meter_set_indicator_value(id(analog_meter), id(hour_hand),          hr_val);
-          lv_meter_set_indicator_value(id(analog_meter), id(hour_pfeil_ind),     hr_val);
-          lv_meter_set_indicator_value(id(analog_meter), id(hour_raute_ind),     hr_val);
-          lv_meter_set_indicator_value(id(analog_meter), id(hour_dreieck_ind),   hr_val);
-          lv_obj_invalidate(id(analog_meter));
+      - lvgl.indicator.update:
+          id: minute_hand
+          value: !lambda 'return id(sntp_time).now().minute;'
+      - lvgl.indicator.update:
+          id: hour_hand
+          value: !lambda |-
+            auto now = id(sntp_time).now();
+            return std::fmod(now.hour, 12) * 60 + now.minute;
 
   - id: hand_style_apply
     then:
       - lambda: |-
-          lv_meter_indicator_t* min_ind     = id(minute_hand);
-          lv_meter_indicator_t* hr_ind      = id(hour_hand);
-          lv_meter_indicator_t* min_pfeil   = id(minute_pfeil_ind);
-          lv_meter_indicator_t* hr_pfeil    = id(hour_pfeil_ind);
-          lv_meter_indicator_t* min_raute   = id(minute_raute_ind);
-          lv_meter_indicator_t* hr_raute    = id(hour_raute_ind);
-          lv_meter_indicator_t* min_dreieck = id(minute_dreieck_ind);
-          lv_meter_indicator_t* hr_dreieck  = id(hour_dreieck_ind);
-          // Standardmässig: needle_line sichtbar, alle img-Zeiger unsichtbar
-          min_ind->opa     = LV_OPA_COVER;
-          hr_ind->opa      = LV_OPA_COVER;
-          min_pfeil->opa   = LV_OPA_TRANSP;
-          hr_pfeil->opa    = LV_OPA_TRANSP;
-          min_raute->opa   = LV_OPA_TRANSP;
-          hr_raute->opa    = LV_OPA_TRANSP;
-          min_dreieck->opa = LV_OPA_TRANSP;
-          hr_dreieck->opa  = LV_OPA_TRANSP;
+          lv_meter_indicator_t* min_ind = id(minute_hand);
+          lv_meter_indicator_t* hr_ind  = id(hour_hand);
           if (id(hand_style_name) == "Klassisch") {
-            min_ind->type_data.needle_line.width = 3;
+            min_ind->type_data.needle_line.width =3;
             min_ind->type_data.needle_line.color = lv_color_hex(0x000000);
-            min_ind->type_data.needle_line.r_mod = -4;
-            hr_ind->type_data.needle_line.width  = 5;
+            hr_ind->type_data.needle_line.width =5;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0x000000);
-            hr_ind->type_data.needle_line.r_mod  = -50;
           } else if (id(hand_style_name) == "Weiss") {
-            min_ind->type_data.needle_line.width = 5;
+            min_ind->type_data.needle_line.width =5;
             min_ind->type_data.needle_line.color = lv_color_hex(0xFFFFFF);
-            min_ind->type_data.needle_line.r_mod = -4;
-            hr_ind->type_data.needle_line.width  = 8;
+            hr_ind->type_data.needle_line.width =8;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0xFFFFFF);
-            hr_ind->type_data.needle_line.r_mod  = -50;
           } else if (id(hand_style_name) == "Rot") {
-            min_ind->type_data.needle_line.width = 3;
+            min_ind->type_data.needle_line.width =3;
             min_ind->type_data.needle_line.color = lv_color_hex(0xFF3333);
-            min_ind->type_data.needle_line.r_mod = -4;
-            hr_ind->type_data.needle_line.width  = 6;
+            hr_ind->type_data.needle_line.width =6;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0xFF3333);
-            hr_ind->type_data.needle_line.r_mod  = -50;
           } else if (id(hand_style_name) == "Gold") {
-            min_ind->type_data.needle_line.width = 3;
+            min_ind->type_data.needle_line.width =3;
             min_ind->type_data.needle_line.color = lv_color_hex(0xFFAA00);
-            min_ind->type_data.needle_line.r_mod = -4;
-            hr_ind->type_data.needle_line.width  = 6;
+            hr_ind->type_data.needle_line.width =6;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0xFFAA00);
-            hr_ind->type_data.needle_line.r_mod  = -50;
           } else if (id(hand_style_name) == "Neon") {
-            min_ind->type_data.needle_line.width = 4;
+            min_ind->type_data.needle_line.width =4;
             min_ind->type_data.needle_line.color = lv_color_hex(0x00FF88);
-            min_ind->type_data.needle_line.r_mod = -4;
-            hr_ind->type_data.needle_line.width  = 7;
+            hr_ind->type_data.needle_line.width =7;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0x00FF88);
-            hr_ind->type_data.needle_line.r_mod  = -50;
-          } else if (id(hand_style_name) == "Pfeil") {
-            min_ind->opa   = LV_OPA_TRANSP;
-            hr_ind->opa    = LV_OPA_TRANSP;
-            min_pfeil->opa = LV_OPA_COVER;
-            hr_pfeil->opa  = LV_OPA_COVER;
-          } else if (id(hand_style_name) == "Raute") {
-            min_ind->opa   = LV_OPA_TRANSP;
-            hr_ind->opa    = LV_OPA_TRANSP;
-            min_raute->opa = LV_OPA_COVER;
-            hr_raute->opa  = LV_OPA_COVER;
-          } else if (id(hand_style_name) == "Dreieck") {
-            min_ind->opa     = LV_OPA_TRANSP;
-            hr_ind->opa      = LV_OPA_TRANSP;
-            min_dreieck->opa = LV_OPA_COVER;
-            hr_dreieck->opa  = LV_OPA_COVER;
           }
           lv_obj_invalidate(id(analog_meter));
 
@@ -819,24 +745,6 @@ lvgl:
                             color: 0x000000
                             r_mod: -4
                             value: 0
-                        - image:
-                            id: minute_pfeil_ind
-                            src: img_minute_pfeil
-                            pivot_x: 0
-                            pivot_y: 10
-                            value: 0
-                        - image:
-                            id: minute_raute_ind
-                            src: img_minute_raute
-                            pivot_x: 0
-                            pivot_y: 10
-                            value: 0
-                        - image:
-                            id: minute_dreieck_ind
-                            src: img_minute_dreieck
-                            pivot_x: 0
-                            pivot_y: 11
-                            value: 0
                     - range_from: 1
                       range_to: 12
                       angle_range: 330
@@ -863,24 +771,6 @@ lvgl:
                             width: 5
                             color: 0x000000
                             r_mod: -50
-                            value: 0
-                        - image:
-                            id: hour_pfeil_ind
-                            src: img_hour_pfeil
-                            pivot_x: 0
-                            pivot_y: 14
-                            value: 0
-                        - image:
-                            id: hour_raute_ind
-                            src: img_hour_raute
-                            pivot_x: 0
-                            pivot_y: 14
-                            value: 0
-                        - image:
-                            id: hour_dreieck_ind
-                            src: img_hour_dreieck
-                            pivot_x: 0
-                            pivot_y: 15
                             value: 0
               - button:
                   id: analog_alarm_btn
