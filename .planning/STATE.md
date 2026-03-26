@@ -138,6 +138,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-26
-Stopped at: Alle Phasen abgeschlossen -- Projekt vollstaendig
-Resume: /gsd:complete-milestone oder weitere Verbesserungen
+Stopped at: 5 Zeiger-Designs via HA-Select umgesetzt und geflasht (1d814f2)
+Resume: Weitere Verbesserungen oder /gsd:complete-milestone
 Wecker-IP fuer OTA: 10.1.1.251
