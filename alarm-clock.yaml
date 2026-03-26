@@ -1,13 +1,21 @@
+# ============================================================
+#  ESP32 Alarm Clock
+#  Hardware: LilyGo T-RGB 2.1" (rund) mit ESP32-S3
+#  Framework: ESPHome (ESP-IDF)
+# ============================================================
+
 esphome:
   name: alarm-clock
   friendly_name: "Wecker"
   on_boot:
-    priority: -100
+    priority: -100   # nach vollständiger Initialisierung starten
     then:
       - lvgl.page.show: analog_clock_page
       - script.execute: analog_time_update
       - script.execute: hand_style_apply
+      # Display-Timeout direkt beim Start aktivieren
       - script.execute: display_sleep_script
+      # Alarm-Labels mit gespeicherten Werten befüllen
       - lvgl.label.update:
           id: hour_value_label
           text: !lambda |-
@@ -33,6 +41,7 @@ esphome:
   platformio_options:
     board_build.flash_mode: dio
 
+# ── Board ──────────────────────────────────────────────────
 esp32:
   board: esp32-s3-devkitc-1
   variant: esp32s3
@@ -44,6 +53,7 @@ psram:
   mode: octal
   speed: 80MHz
 
+# ── Dienste ────────────────────────────────────────────────
 logger:
 
 api:
@@ -61,14 +71,17 @@ wifi:
     ssid: "Wecker-Fallback"
     password: !secret fallback_password
 
+# ── Hardware-Bus ───────────────────────────────────────────
 i2c:
   sda: GPIO8
   scl: GPIO48
 
+# IO-Expander für Display-Reset und SPI-Pins
 xl9535:
   - id: xl9535_hub
     address: 0x20
 
+# Software-SPI für Display-Konfiguration
 spi:
   - id: lcd_spi
     clk_pin:
@@ -79,12 +92,13 @@ spi:
       number: 4
     interface: software
 
+# ── Display ────────────────────────────────────────────────
 display:
   - platform: mipi_rgb
     model: T-RGB-2.1
     id: my_display
     auto_clear_enabled: false
-    update_interval: never
+    update_interval: never   # LVGL übernimmt das Rendering
     hsync_pin: GPIO47
     show_test_card: true
     reset_pin:
@@ -94,25 +108,31 @@ display:
       xl9535: xl9535_hub
       number: 2
 
+# ── Touchscreen ────────────────────────────────────────────
 touchscreen:
   - platform: ft5x06
     id: my_touchscreen
     address: 0x38
-    update_interval: 50ms
+    update_interval: 50ms   # schnelle Touch-Reaktion
     on_touch:
+      # Jeder Touch: Display aufwecken + Timeout neu starten
       - light.turn_on: backlight
       - script.execute: display_sleep_script
 
+# ── Ausgänge ───────────────────────────────────────────────
 output:
+  # Backlight per PWM dimmbar
   - platform: ledc
     id: backlight_output
     pin: GPIO46
     frequency: 1000Hz
+  # Passiver Buzzer für RTTTL-Melodien
   - platform: ledc
     id: buzzer_output
     pin: GPIO4
     frequency: 1000Hz
 
+# ── Licht ──────────────────────────────────────────────────
 light:
   - platform: monochromatic
     output: backlight_output
@@ -121,7 +141,9 @@ light:
     default_transition_length: 0.5s
     restore_mode: ALWAYS_ON
 
+# ── Switches (Home Assistant) ──────────────────────────────
 switch:
+  # Alarm aktivieren/deaktivieren
   - platform: template
     name: "Alarm aktiv"
     id: alarm_enabled_switch
@@ -152,6 +174,7 @@ switch:
                      id(alarm_hour), id(alarm_minute));
             return buf;
 
+  # Alarm nur Mo–Fr auslösen
   - platform: template
     name: "Nur Mo-Fr"
     id: weekday_only_switch
@@ -174,6 +197,7 @@ switch:
           id: weekday_label
           text: ""
 
+# ── Alarmzeit (Home Assistant Datetime) ───────────────────
 datetime:
   - platform: template
     name: "Alarmzeit"
@@ -218,6 +242,7 @@ datetime:
             snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
             return buf;
 
+# ── Globale Variablen (Flash-persistent) ──────────────────
 globals:
   - id: alarm_hour
     type: int
@@ -231,6 +256,7 @@ globals:
     type: bool
     restore_value: yes
     initial_value: 'false'
+  # Laufzeit-Flag: Alarm klingelt gerade
   - id: alarm_ringing
     type: bool
     restore_value: no
@@ -254,7 +280,9 @@ globals:
     max_restore_data_length: 32
     initial_value: '"Klassisch"'
 
+# ── Select-Entitäten (Home Assistant) ─────────────────────
 select:
+  # Alarm-Melodie wählen
   - platform: template
     name: "Alarm Melodie"
     id: alarm_melody_select
@@ -270,6 +298,7 @@ select:
           id: alarm_melody_name
           value: !lambda 'return x;'
 
+  # Zeiger-Design wählen
   - platform: template
     name: "Zeiger Design"
     id: hand_style_select
@@ -289,6 +318,7 @@ select:
           value: !lambda 'return x;'
       - script.execute: hand_style_apply
 
+  # Hintergrundfarbe des Zifferblatts
   - platform: template
     name: "Hintergrundfarbe"
     id: bg_color_select
@@ -310,10 +340,12 @@ select:
           id: analog_clock_bg
           bg_color: !lambda 'return lv_color_hex(id(bg_color_hex));'
 
+# ── RTTTL Buzzer ───────────────────────────────────────────
 rtttl:
   output: buzzer_output
   id: alarm_buzzer
   on_finished_playback:
+    # Melodie automatisch wiederholen solange Alarm aktiv
     - if:
         condition:
           lambda: 'return id(alarm_ringing);'
@@ -326,13 +358,17 @@ rtttl:
                 return std::string("FrereJacques:d=4,o=5,b=126:c,d,e,c,c,d,e,c,e,f,2g,e,f,2g");
               return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
 
+# ── Scripts ────────────────────────────────────────────────
 script:
+  # Display-Timeout: nach 3min Inaktivität Backlight ausschalten.
+  # mode: restart → jeder Touch setzt den Timer zurück.
   - id: display_sleep_script
     mode: restart
     then:
       - delay: 3min
       - light.turn_off: backlight
 
+  # Alarm-Timeout: nach 5min automatisch stoppen (Überschlafen verhindern).
   - id: alarm_timeout_script
     mode: restart
     then:
@@ -343,6 +379,7 @@ script:
       - rtttl.stop:
       - lvgl.page.show: analog_clock_page
 
+  # Snooze: Alarm pausieren, nach 5min erneut klingeln.
   - id: snooze_action
     mode: restart
     then:
@@ -356,10 +393,11 @@ script:
             return std::string("Entertainer:d=4,o=5,b=140:8d,8d#,8e,c,8e,c,8e,2b.,8c6,8c6,8c6,2a.,8b.,8a,8g,8a,8b,a,8a.,8g,8f#,8e,8d,2g,p");
           if (id(alarm_melody_name) == "Frere Jacques")
             return std::string("FrereJacques:d=4,o=5,b=126:c,d,e,c,c,d,e,c,e,f,2g,e,f,2g");
-          return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
+          return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8g,8e,2c");
       - lvgl.page.show: alarm_ringing_page
       - script.execute: alarm_timeout_script
 
+  # Alarm vollständig beenden und zur Uhr zurückspringen.
   - id: alarm_stop_action
     mode: single
     then:
@@ -369,6 +407,7 @@ script:
           id(alarm_enabled) = false;
       - lvgl.page.show: analog_clock_page
 
+  # Analogzeiger auf aktuelle Zeit setzen.
   - id: analog_time_update
     then:
       - lvgl.indicator.update:
@@ -380,39 +419,41 @@ script:
             auto now = id(sntp_time).now();
             return std::fmod(now.hour, 12) * 60 + now.minute;
 
+  # Zeiger-Design anwenden (Farbe und Breite je nach Auswahl).
   - id: hand_style_apply
     then:
       - lambda: |-
           lv_meter_indicator_t* min_ind = id(minute_hand);
           lv_meter_indicator_t* hr_ind  = id(hour_hand);
           if (id(hand_style_name) == "Klassisch") {
-            min_ind->type_data.needle_line.width =3;
+            min_ind->type_data.needle_line.width = 3;
             min_ind->type_data.needle_line.color = lv_color_hex(0x000000);
-            hr_ind->type_data.needle_line.width =5;
+            hr_ind->type_data.needle_line.width  = 5;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0x000000);
           } else if (id(hand_style_name) == "Weiss") {
-            min_ind->type_data.needle_line.width =5;
+            min_ind->type_data.needle_line.width = 5;
             min_ind->type_data.needle_line.color = lv_color_hex(0xFFFFFF);
-            hr_ind->type_data.needle_line.width =8;
+            hr_ind->type_data.needle_line.width  = 8;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0xFFFFFF);
           } else if (id(hand_style_name) == "Rot") {
-            min_ind->type_data.needle_line.width =3;
+            min_ind->type_data.needle_line.width = 3;
             min_ind->type_data.needle_line.color = lv_color_hex(0xFF3333);
-            hr_ind->type_data.needle_line.width =6;
+            hr_ind->type_data.needle_line.width  = 6;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0xFF3333);
           } else if (id(hand_style_name) == "Gold") {
-            min_ind->type_data.needle_line.width =3;
+            min_ind->type_data.needle_line.width = 3;
             min_ind->type_data.needle_line.color = lv_color_hex(0xFFAA00);
-            hr_ind->type_data.needle_line.width =6;
+            hr_ind->type_data.needle_line.width  = 6;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0xFFAA00);
           } else if (id(hand_style_name) == "Neon") {
-            min_ind->type_data.needle_line.width =4;
+            min_ind->type_data.needle_line.width = 4;
             min_ind->type_data.needle_line.color = lv_color_hex(0x00FF88);
-            hr_ind->type_data.needle_line.width =7;
+            hr_ind->type_data.needle_line.width  = 7;
             hr_ind->type_data.needle_line.color  = lv_color_hex(0x00FF88);
           }
           lv_obj_invalidate(id(analog_meter));
 
+# ── Zeitquelle ─────────────────────────────────────────────
 time:
   - platform: homeassistant
     id: sntp_time
@@ -422,6 +463,7 @@ time:
         - logger.log: "NTP-Zeit synchronisiert"
         - script.execute: analog_time_update
     on_time:
+      # Jede Minute: Alarm prüfen + Zeiger aktualisieren
       - seconds: 0
         minutes: /1
         then:
@@ -444,7 +486,7 @@ time:
                       return std::string("Entertainer:d=4,o=5,b=140:8d,8d#,8e,c,8e,c,8e,2b.,8c6,8c6,8c6,2a.,8b.,8a,8g,8a,8b,a,8a.,8g,8f#,8e,8d,2g,p");
                     if (id(alarm_melody_name) == "Frere Jacques")
                       return std::string("FrereJacques:d=4,o=5,b=126:c,d,e,c,c,d,e,c,e,f,2g,e,f,2g");
-                    return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8d6,8e6,8c6,8g,8e,2c");
+                    return std::string("Reveille:d=4,o=5,b=120:8g,8g,8g,8c,8e,8g,2c6,8e,8g,2c6,8e,8g,8c6,8e6,8d6,8c6,8g,8e,2c");
                 - lvgl.page.show: alarm_ringing_page
           - if:
               condition:
@@ -463,6 +505,7 @@ time:
                       snprintf(buf, sizeof(buf), "%02d:%02d", now.hour, now.minute);
                       return buf;
 
+# ── LVGL UI ────────────────────────────────────────────────
 lvgl:
   displays:
     - my_display
@@ -472,6 +515,11 @@ lvgl:
       long_press_repeat_time: 65535ms
   buffer_size: 25%
   pages:
+
+    # ----------------------------------------------------------
+    # Seite 1: Alarm-Einstellungen
+    # Zugang: Long-Press auf Alarm-Label der Hauptseite
+    # ----------------------------------------------------------
     - id: alarm_settings_page
       bg_color: 0xFFFFFF
       widgets:
@@ -645,6 +693,10 @@ lvgl:
                   text_color: 0xFFFFFF
                   text: "Setzen"
 
+    # ----------------------------------------------------------
+    # Seite 2: Alarm klingelt
+    # Zeigt Snooze (5min) und Stopp
+    # ----------------------------------------------------------
     - id: alarm_ringing_page
       bg_color: 0x1A1A2E
       widgets:
@@ -718,6 +770,11 @@ lvgl:
                   text_color: 0xFFFFFF
                   text: "Stopp"
 
+    # ----------------------------------------------------------
+    # Seite 3: Analoge Uhr (Hauptseite)
+    # Tap auf Alarm-Label: Alarm ein/aus
+    # Long-Press auf Alarm-Label: Einstellungsseite
+    # ----------------------------------------------------------
     - id: analog_clock_page
       widgets:
         - obj:
@@ -739,6 +796,7 @@ lvgl:
                   text_color: 0x000000
                   text_font: montserrat_48
                   scales:
+                    # Minutenskala (0–60)
                     - range_from: 0
                       range_to: 60
                       angle_range: 360
@@ -755,6 +813,7 @@ lvgl:
                             color: 0x000000
                             r_mod: -4
                             value: 0
+                    # Stundenzahlen (1–12)
                     - range_from: 1
                       range_to: 12
                       angle_range: 330
@@ -769,6 +828,7 @@ lvgl:
                           length: 10
                           color: 0x000000
                           label_gap: 40
+                    # Stundenskala (0–720 = 12h × 60min)
                     - range_from: 0
                       range_to: 720
                       angle_range: 360
@@ -782,6 +842,7 @@ lvgl:
                             color: 0x000000
                             r_mod: -50
                             value: 0
+              # Alarm-Label: Tap = ein/aus, Long-Press = Einstellungen
               - button:
                   id: analog_alarm_btn
                   width: 154
@@ -824,6 +885,7 @@ lvgl:
                                      id(alarm_hour), id(alarm_minute));
                           }
                           return buf;
+              # Mo-Fr Anzeige unter dem Alarm-Label
               - label:
                   id: weekday_label
                   align: CENTER
