@@ -6,6 +6,7 @@ esphome:
     then:
       - lvgl.page.show: analog_clock_page
       - script.execute: analog_time_update
+      - script.execute: hand_style_apply
       - lvgl.label.update:
           id: hour_value_label
           text: !lambda |-
@@ -243,6 +244,11 @@ globals:
     type: bool
     restore_value: yes
     initial_value: 'true'
+  - id: hand_style_name
+    type: std::string
+    restore_value: yes
+    max_restore_data_length: 32
+    initial_value: '"Klassisch"'
 
 select:
   - platform: template
@@ -259,6 +265,25 @@ select:
       - globals.set:
           id: alarm_melody_name
           value: !lambda 'return x;'
+
+  - platform: template
+    name: "Zeiger Design"
+    id: hand_style_select
+    icon: mdi:clock-outline
+    options:
+      - "Klassisch"
+      - "Weiss"
+      - "Rot"
+      - "Gold"
+      - "Neon"
+    initial_option: "Klassisch"
+    optimistic: true
+    restore_value: true
+    set_action:
+      - globals.set:
+          id: hand_style_name
+          value: !lambda 'return x;'
+      - script.execute: hand_style_apply
 
   - platform: template
     name: "Hintergrundfarbe"
@@ -344,6 +369,39 @@ script:
           value: !lambda |-
             auto now = id(sntp_time).now();
             return std::fmod(now.hour, 12) * 60 + now.minute;
+
+  - id: hand_style_apply
+    then:
+      - lambda: |-
+          lv_meter_indicator_t* min_ind = id(minute_hand);
+          lv_meter_indicator_t* hr_ind  = id(hour_hand);
+          if (id(hand_style_name) == "Klassisch") {
+            min_ind->type_data.needle_line.width =3;
+            min_ind->type_data.needle_line.color = lv_color_hex(0x000000);
+            hr_ind->type_data.needle_line.width =5;
+            hr_ind->type_data.needle_line.color  = lv_color_hex(0x000000);
+          } else if (id(hand_style_name) == "Weiss") {
+            min_ind->type_data.needle_line.width =5;
+            min_ind->type_data.needle_line.color = lv_color_hex(0xFFFFFF);
+            hr_ind->type_data.needle_line.width =8;
+            hr_ind->type_data.needle_line.color  = lv_color_hex(0xFFFFFF);
+          } else if (id(hand_style_name) == "Rot") {
+            min_ind->type_data.needle_line.width =3;
+            min_ind->type_data.needle_line.color = lv_color_hex(0xFF3333);
+            hr_ind->type_data.needle_line.width =6;
+            hr_ind->type_data.needle_line.color  = lv_color_hex(0xFF3333);
+          } else if (id(hand_style_name) == "Gold") {
+            min_ind->type_data.needle_line.width =3;
+            min_ind->type_data.needle_line.color = lv_color_hex(0xFFAA00);
+            hr_ind->type_data.needle_line.width =6;
+            hr_ind->type_data.needle_line.color  = lv_color_hex(0xFFAA00);
+          } else if (id(hand_style_name) == "Neon") {
+            min_ind->type_data.needle_line.width =4;
+            min_ind->type_data.needle_line.color = lv_color_hex(0x00FF88);
+            hr_ind->type_data.needle_line.width =7;
+            hr_ind->type_data.needle_line.color  = lv_color_hex(0x00FF88);
+          }
+          lv_obj_invalidate(id(analog_meter));
 
 time:
   - platform: homeassistant
