@@ -346,13 +346,9 @@ script:
             return std::fmod(now.hour, 12) * 60 + now.minute;
 
 time:
-  - platform: sntp
+  - platform: homeassistant
     id: sntp_time
     timezone: "Europe/Berlin"
-    servers:
-      - 10.1.1.2
-      - 0.de.pool.ntp.org
-      - 1.de.pool.ntp.org
     on_time_sync:
       then:
         - logger.log: "NTP-Zeit synchronisiert"
