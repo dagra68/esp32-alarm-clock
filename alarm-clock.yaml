@@ -6,6 +6,28 @@ esphome:
     then:
       - lvgl.page.show: analog_clock_page
       - script.execute: analog_time_update
+      - lvgl.label.update:
+          id: hour_value_label
+          text: !lambda |-
+            static char buf[4];
+            snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
+            return buf;
+      - lvgl.label.update:
+          id: minute_value_label
+          text: !lambda |-
+            static char buf[4];
+            snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
+            return buf;
+      - select.set:
+          id: alarm_melody_select
+          option: !lambda 'return id(alarm_melody_name);'
+      - select.set:
+          id: bg_color_select
+          option: !lambda |-
+            if (id(bg_color_hex) == 0xFFFFFF) return std::string("Weiss");
+            if (id(bg_color_hex) == 0x000000) return std::string("Schwarz");
+            if (id(bg_color_hex) == 0x1A1A2E) return std::string("Dunkelblau");
+            return std::string("Pink");
   platformio_options:
     board_build.flash_mode: dio
 
@@ -74,26 +96,17 @@ touchscreen:
   - platform: ft5x06
     id: my_touchscreen
     address: 0x38
-    interrupt_pin: GPIO1
+    update_interval: 500ms
 
 output:
   - platform: ledc
     id: backlight_output
     pin: GPIO46
     frequency: 1000Hz
-
-i2s_audio:
-  i2s_lrclk_pin: GPIO39
-  i2s_bclk_pin: GPIO38
-
-speaker:
-  - platform: i2s_audio
-    id: alarm_speaker
-    dac_type: external
-    i2s_dout_pin: GPIO40
-    channel: mono
-    sample_rate: 16000
-    bits_per_sample: 16bit
+  - platform: ledc
+    id: buzzer_output
+    pin: GPIO4
+    frequency: 1000Hz
 
 light:
   - platform: monochromatic
@@ -108,7 +121,7 @@ switch:
     name: "Alarm aktiv"
     id: alarm_enabled_switch
     icon: mdi:alarm
-    restore_mode: DISABLED
+    restore_mode: RESTORE_DEFAULT_OFF
     lambda: |-
       return id(alarm_enabled);
     turn_on_action:
@@ -117,14 +130,22 @@ switch:
           value: 'true'
       - lvgl.label.update:
           id: analog_alarm_label
-          text_color: 0xFFAA00
+          text: !lambda |-
+            static char buf[32];
+            snprintf(buf, sizeof(buf), "#FFAA00 " LV_SYMBOL_BELL "# %02d:%02d",
+                     id(alarm_hour), id(alarm_minute));
+            return buf;
     turn_off_action:
       - globals.set:
           id: alarm_enabled
           value: 'false'
       - lvgl.label.update:
           id: analog_alarm_label
-          text_color: 0x666666
+          text: !lambda |-
+            static char buf[32];
+            snprintf(buf, sizeof(buf), "#000000 " LV_SYMBOL_BELL "# %02d:%02d",
+                     id(alarm_hour), id(alarm_minute));
+            return buf;
 
   - platform: template
     name: "Nur Mo-Fr"
@@ -138,23 +159,15 @@ switch:
           id: weekday_only
           value: 'true'
       - lvgl.label.update:
-          id: analog_alarm_label
-          text: !lambda |-
-            static char buf[24];
-            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d Mo-Fr",
-                     id(alarm_hour), id(alarm_minute));
-            return buf;
+          id: weekday_label
+          text: "Mo-Fr"
     turn_off_action:
       - globals.set:
           id: weekday_only
           value: 'false'
       - lvgl.label.update:
-          id: analog_alarm_label
-          text: !lambda |-
-            static char buf[24];
-            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
-                     id(alarm_hour), id(alarm_minute));
-            return buf;
+          id: weekday_label
+          text: ""
 
 datetime:
   - platform: template
@@ -178,12 +191,12 @@ datetime:
       - lvgl.label.update:
           id: analog_alarm_label
           text: !lambda |-
-            static char buf[24];
-            if (id(weekday_only)) {
-              snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d Mo-Fr",
+            static char buf[32];
+            if (id(alarm_enabled)) {
+              snprintf(buf, sizeof(buf), "#FFAA00 " LV_SYMBOL_BELL "# %02d:%02d",
                        id(alarm_hour), id(alarm_minute));
             } else {
-              snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+              snprintf(buf, sizeof(buf), "#000000 " LV_SYMBOL_BELL "# %02d:%02d",
                        id(alarm_hour), id(alarm_minute));
             }
             return buf;
@@ -269,9 +282,8 @@ select:
           bg_color: !lambda 'return lv_color_hex(id(bg_color_hex));'
 
 rtttl:
-  speaker: alarm_speaker
+  output: buzzer_output
   id: alarm_buzzer
-  gain: 0.8
   on_finished_playback:
     - if:
         condition:
@@ -338,12 +350,13 @@ time:
     id: sntp_time
     timezone: "Europe/Berlin"
     servers:
+      - 10.1.1.2
       - 0.de.pool.ntp.org
       - 1.de.pool.ntp.org
-      - 2.de.pool.ntp.org
     on_time_sync:
       then:
         - logger.log: "NTP-Zeit synchronisiert"
+        - script.execute: analog_time_update
     on_time:
       - seconds: 0
         minutes: /1
@@ -374,6 +387,17 @@ time:
                 lvgl.page.is_showing: analog_clock_page
               then:
                 - script.execute: analog_time_update
+          - if:
+              condition:
+                lvgl.page.is_showing: alarm_ringing_page
+              then:
+                - lvgl.label.update:
+                    id: ringing_time_label
+                    text: !lambda |-
+                      static char buf[8];
+                      auto now = id(sntp_time).now();
+                      snprintf(buf, sizeof(buf), "%02d:%02d", now.hour, now.minute);
+                      return buf;
 
 lvgl:
   displays:
@@ -385,14 +409,14 @@ lvgl:
   buffer_size: 25%
   pages:
     - id: alarm_settings_page
-      bg_color: 0xFF69B4
+      bg_color: 0xFFFFFF
       widgets:
         - label:
             id: settings_header_label
             align: TOP_MID
             y: 100
             text_font: montserrat_24
-            text_color: 0xFFAA00
+            text_color: 0x000000
             text: "Alarm einstellen"
 
         - label:
@@ -401,7 +425,7 @@ lvgl:
             x: -80
             y: -10
             text_font: montserrat_36
-            text_color: 0xFFFFFF
+            text_color: 0x000000
             text: !lambda |-
               static char buf[4];
               snprintf(buf, sizeof(buf), "%02d", id(alarm_hour));
@@ -413,7 +437,7 @@ lvgl:
             x: 0
             y: -10
             text_font: montserrat_36
-            text_color: 0xCCCCCC
+            text_color: 0x000000
             text: ":"
 
         - label:
@@ -422,7 +446,7 @@ lvgl:
             x: 80
             y: -10
             text_font: montserrat_36
-            text_color: 0xFFFFFF
+            text_color: 0x000000
             text: !lambda |-
               static char buf[4];
               snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
@@ -540,12 +564,12 @@ lvgl:
               - lvgl.label.update:
                   id: analog_alarm_label
                   text: !lambda |-
-                    static char buf[24];
-                    if (id(weekday_only)) {
-                      snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d Mo-Fr",
+                    static char buf[32];
+                    if (id(alarm_enabled)) {
+                      snprintf(buf, sizeof(buf), "#FFAA00 " LV_SYMBOL_BELL "# %02d:%02d",
                                id(alarm_hour), id(alarm_minute));
                     } else {
-                      snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                      snprintf(buf, sizeof(buf), "#000000 " LV_SYMBOL_BELL "# %02d:%02d",
                                id(alarm_hour), id(alarm_minute));
                     }
                     return buf;
@@ -555,9 +579,10 @@ lvgl:
                   align: CENTER
                   text_font: montserrat_24
                   text_color: 0xFFFFFF
-                  text: "Zurueck"
+                  text: "Setzen"
 
     - id: alarm_ringing_page
+      bg_color: 0x1A1A2E
       widgets:
         - obj:
             id: alarm_ringing_bg
@@ -568,7 +593,6 @@ lvgl:
             border_width: 0
             pad_all: 0
             clickable: false
-
         - label:
             id: ringing_header_label
             align: CENTER
@@ -585,7 +609,11 @@ lvgl:
             text_color: 0xFFAA00
             text: !lambda |-
               static char buf[8];
-              snprintf(buf, sizeof(buf), "%02d:%02d", id(alarm_hour), id(alarm_minute));
+              auto now = id(sntp_time).now();
+              if (now.is_valid())
+                snprintf(buf, sizeof(buf), "%02d:%02d", now.hour, now.minute);
+              else
+                snprintf(buf, sizeof(buf), "--:--");
               return buf;
 
         - button:
@@ -598,6 +626,7 @@ lvgl:
             bg_color: 0xFFAA00
             border_width: 0
             on_short_click:
+              - logger.log: "TOUCH: snooze_btn geklickt"
               - script.execute: snooze_action
             widgets:
               - label:
@@ -616,6 +645,7 @@ lvgl:
             bg_color: 0xFF3333
             border_width: 0
             on_short_click:
+              - logger.log: "TOUCH: stopp_btn geklickt"
               - script.execute: alarm_stop_action
             widgets:
               - label:
@@ -694,16 +724,23 @@ lvgl:
                   height: 54
                   align: CENTER
                   y: 90
-                  bg_color: 0x000000
-                  bg_opa: 70%
+                  bg_opa: 0%
                   border_width: 0
                   shadow_width: 0
                   on_short_click:
                     - lambda: 'id(alarm_enabled) = !id(alarm_enabled);'
                     - lvgl.label.update:
                         id: analog_alarm_label
-                        text_color: !lambda |-
-                          return id(alarm_enabled) ? lv_color_hex(0xFFAA00) : lv_color_hex(0x666666);
+                        text: !lambda |-
+                          static char buf[32];
+                          if (id(alarm_enabled)) {
+                            snprintf(buf, sizeof(buf), "#FFAA00 " LV_SYMBOL_BELL "# %02d:%02d",
+                                     id(alarm_hour), id(alarm_minute));
+                          } else {
+                            snprintf(buf, sizeof(buf), "#000000 " LV_SYMBOL_BELL "# %02d:%02d",
+                                     id(alarm_hour), id(alarm_minute));
+                          }
+                          return buf;
                   on_long_press:
                     - lvgl.page.show: alarm_settings_page
                   widgets:
@@ -711,14 +748,23 @@ lvgl:
                         id: analog_alarm_label
                         align: CENTER
                         text_font: montserrat_28
-                        text_color: 0x666666
+                        text_color: 0x000000
+                        recolor: true
                         text: !lambda |-
-                          static char buf[24];
-                          if (id(weekday_only)) {
-                            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d Mo-Fr",
+                          static char buf[32];
+                          if (id(alarm_enabled)) {
+                            snprintf(buf, sizeof(buf), "#FFAA00 " LV_SYMBOL_BELL "# %02d:%02d",
                                      id(alarm_hour), id(alarm_minute));
                           } else {
-                            snprintf(buf, sizeof(buf), LV_SYMBOL_BELL " %02d:%02d",
+                            snprintf(buf, sizeof(buf), "#000000 " LV_SYMBOL_BELL "# %02d:%02d",
                                      id(alarm_hour), id(alarm_minute));
                           }
                           return buf;
+              - label:
+                  id: weekday_label
+                  align: CENTER
+                  y: 127
+                  text_font: montserrat_22
+                  text_color: 0x000000
+                  text: !lambda |-
+                    return std::string(id(weekday_only) ? "Mo-Fr" : "");

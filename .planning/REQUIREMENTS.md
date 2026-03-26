@@ -11,16 +11,16 @@
 - [x] **DISP-01**: Nutzer sieht digitale Uhrzeit auf dem runden Display (LVGL Label)
 - [x] **DISP-02**: Nutzer sieht analoge Uhr mit Stunden- und Minutenzeiger (LVGL Meter-Widget) -- kein Sekundenzeiger per User-Entscheidung
 - [x] **DISP-03**: Nutzer sieht Datum und Wochentag auf dem Display
-- [ ] **DISP-04**: Nutzer sieht wann der naechste Alarm ausgeloest wird
-- [ ] **DISP-05**: Nutzer sieht auf dem Display ob der Alarm aktiviert oder deaktiviert ist
+- [x] **DISP-04**: Nutzer sieht wann der naechste Alarm ausgeloest wird
+- [x] **DISP-05**: Nutzer sieht auf dem Display ob der Alarm aktiviert oder deaktiviert ist
 - [x] **DISP-06**: Nutzer kann per HA-Select zwischen analogem und digitalem Zifferblatt wechseln -- per User-Entscheidung HA-Select statt Touch
 
 ### Alarm
 
 - [x] **ALRM-01**: Nutzer kann eine Alarmzeit (Stunde + Minute) fuer Mo-Fr konfigurieren
-- [ ] **ALRM-02**: Nutzer kann die Alarmzeit direkt am Touch-Display einstellen
+- [x] **ALRM-02**: Nutzer kann die Alarmzeit direkt am Touch-Display einstellen
 - [x] **ALRM-03**: Alarm loest Mo-Fr zur konfigurierten Zeit eine RTTTL-Melodie aus (Piezo-Buzzer via LEDC PWM)
-- [ ] **ALRM-04**: Nutzer kann den Alarm per Touch-Button dauerhaft ausschalten
+- [x] **ALRM-04**: Nutzer kann den Alarm per Touch-Button dauerhaft ausschalten
 - [x] **ALRM-05**: Nutzer kann per physischer Taste 5 Minuten Snooze ausloesen
 - [x] **ALRM-06**: Nutzer kann den Alarm per Toggle aktivieren und deaktivieren
 
@@ -65,13 +65,13 @@
 | DISP-01 | Phase 1 | Complete |
 | DISP-02 | Phase 4 | Complete |
 | DISP-03 | Phase 1 | Complete |
-| DISP-04 | Phase 2 | Pending |
-| DISP-05 | Phase 2 | Pending |
+| DISP-04 | Phase 2 | Complete |
+| DISP-05 | Phase 2 | Complete |
 | DISP-06 | Phase 4 | Complete |
 | ALRM-01 | Phase 2 | Complete |
-| ALRM-02 | Phase 2 | Pending |
+| ALRM-02 | Phase 2 | Complete |
 | ALRM-03 | Phase 2 | Complete |
-| ALRM-04 | Phase 2 | Pending |
+| ALRM-04 | Phase 2 | Complete |
 | ALRM-05 | Phase 2 | Complete |
 | ALRM-06 | Phase 2 | Complete |
 | HA-01 | Phase 3 | Pending |
