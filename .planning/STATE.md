@@ -67,16 +67,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Der Wecker weckt zuverlaessig an Wochentagen und laesst sich ueber Home Assistant automatisch an Feiertagen stumm schalten.
-**Current focus:** Phase 2: Alarm-Kernfunktion -- 02-03 abgeschlossen (Gaps: Snooze/Stopp-Buttons + weekday_only-Display)
+**Current focus:** Alle 4 Phasen abgeschlossen -- Projekt vollstaendig
 
 ## Current Position
 
-Phase: 2 (Alarm-Kernfunktion) -- Plan 02-03 abgeschlossen
-Plan: 3/3 in Phase 2 (02-01, 02-02, 02-03 vollstaendig -- Gaps dokumentiert)
-Status: Phase 2 teilweise -- GAP-1 (Snooze/Stopp) kritisch, Fix-Plan empfohlen vor Phase 3
-Last activity: 2026-03-25 -- Plan 02-03 abgeschlossen, Board-Verifikation mit 3 Gaps
+Phase: 4/4 -- ALLE PHASEN ABGESCHLOSSEN
+Plan: alle Plans vollstaendig
+Status: Milestone v1.0 komplett
+Last activity: 2026-03-26 -- Phase 2+3 als komplett bestaetigt, Zeit-Fix (homeassistant platform) geflasht
 
-Progress: [█████░░░░░] 50% (Phase 1 + Phase 4 von 4 Phasen -- Phase 2 Gaps offen)
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -138,6 +138,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-26
-Stopped at: Zeit-Fix abgeschlossen (be9a5d7) -- homeassistant Zeitquelle, verifiziert
-Resume: Phase 3 (HA-Integration) planen -- /gsd:plan-phase 3
+Stopped at: Alle Phasen abgeschlossen -- Projekt vollstaendig
+Resume: /gsd:complete-milestone oder weitere Verbesserungen
 Wecker-IP fuer OTA: 10.1.1.251

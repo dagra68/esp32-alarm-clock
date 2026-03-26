@@ -13,8 +13,8 @@ Vom blanken LilyGo T-RGB Board zum vollstaendigen ESPHome-Wecker in 4 Phasen: Zu
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Board und Digitale Uhr** - ESPHome-Grundkonfiguration, Display-Treiber, NTP-Sync, digitale Zeitanzeige (completed 2026-03-24)
-- [ ] **Phase 2: Alarm-Kernfunktion** - Alarm-Logik, RTTTL-Buzzer, Snooze, Touch-Bedienung am Display
-- [ ] **Phase 3: Home Assistant Integration** - HA-Entities, Automatisierung, Helligkeit, Melodie-Auswahl
+- [x] **Phase 2: Alarm-Kernfunktion** - Alarm-Logik, RTTTL-Buzzer, Snooze, Touch-Bedienung am Display (completed 2026-03-26)
+- [x] **Phase 3: Home Assistant Integration** - HA-Entities, Automatisierung, Helligkeit, Melodie-Auswahl (completed 2026-03-26)
 - [x] **Phase 4: Analoge Uhr und Seitenwechsel** - LVGL Meter-Widget, HA-gesteuerter Seitenwechsel (completed 2026-03-25)
 
 ## Phase Details
@@ -56,15 +56,20 @@ Plans:
 **Requirements**: HA-01, HA-02, HA-03, HA-04, HA-05, CTRL-01
 **Success Criteria** (what must be TRUE):
   1. Alarm Ein/Aus ist als Switch-Entity in Home Assistant sichtbar und steuerbar
-  2. Alarmzeit (Stunde + Minute) kann ueber Number-Entities in HA eingestellt werden
+  2. Alarmzeit kann ueber datetime Time-Entity in HA eingestellt werden
   3. Home Assistant kann den Alarm per Automatisierung deaktivieren (z.B. Feiertags-Kalender)
   4. Melodie-Auswahl ist als Select-Entity in HA verfuegbar (mind. 3 RTTTL-Melodien)
-  5. Display-Helligkeit ist ueber HA-Slider und Touch am Geraet steuerbar
-**Plans**: TBD
+  5. Display-Helligkeit ist ueber HA-Slider (light entity) steuerbar
+**Status**: Complete (2026-03-26) -- alle Entities bereits in alarm-clock.yaml umgesetzt
 
-Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+Implemented entities:
+- switch: "Alarm aktiv" (alarm_enabled_switch)
+- switch: "Nur Mo-Fr" (weekday_only_switch)
+- datetime type:time "Alarmzeit" (alarm_time)
+- select: "Alarm Melodie" (alarm_melody_select) -- Entertainer, Frere Jacques, Reveille
+- select: "Hintergrundfarbe" (bg_color_select)
+- light: "Display Backlight" (backlight)
+- time: platform homeassistant (sntp_time) -- Zeit via HA-API
 
 ### Phase 4: Analoge Uhr und Seitenwechsel
 **Goal**: Nutzer kann zwischen digitalem und analogem Zifferblatt per HA-Select wechseln
@@ -87,6 +92,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Board und Digitale Uhr | 1/1 | Complete   | 2026-03-24 |
-| 2. Alarm-Kernfunktion | 3/3 | Gaps offen -- Fix-Plan empfohlen (ALRM-04, ALRM-05) | 2026-03-25 |
-| 3. Home Assistant Integration | 0/2 | Not started | - |
+| 2. Alarm-Kernfunktion | 4/4 | Complete | 2026-03-26 |
+| 3. Home Assistant Integration | -- | Complete (in Phase 2/4 umgesetzt) | 2026-03-26 |
 | 4. Analoge Uhr und Seitenwechsel | 1/1 | Complete    | 2026-03-25 |
