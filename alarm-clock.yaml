@@ -13,8 +13,6 @@ esphome:
       - lvgl.page.show: analog_clock_page
       - script.execute: analog_time_update
       - script.execute: hand_style_apply
-      # Display-Timeout direkt beim Start aktivieren
-      - script.execute: display_sleep_script
       # Alarm-Labels mit gespeicherten Werten befüllen
       - lvgl.label.update:
           id: hour_value_label
@@ -113,14 +111,7 @@ touchscreen:
   - platform: ft5x06
     id: my_touchscreen
     address: 0x38
-    update_interval: 50ms   # schnelle Touch-Reaktion
-    on_touch:
-      # Jeder Touch: Display aufwecken + Timeout neu starten
-      - logger.log: "TOUCH: Display aufwecken"
-      - light.turn_on:
-          id: backlight
-          brightness: 100%
-      - script.execute: display_sleep_script
+    update_interval: 50ms
 
 # ── Ausgänge ───────────────────────────────────────────────
 output:
@@ -363,17 +354,6 @@ rtttl:
 
 # ── Scripts ────────────────────────────────────────────────
 script:
-  # Display-Timeout: nach 3min Inaktivität auf 1% dimmen.
-  # Komplett aus (turn_off) verhindert dass der FT5x06 Touches meldet.
-  # mode: restart → jeder Touch setzt den Timer zurück.
-  - id: display_sleep_script
-    mode: restart
-    then:
-      - delay: 3min
-      - light.turn_on:
-          id: backlight
-          brightness: 1%
-
   # Alarm-Timeout: nach 5min automatisch stoppen (Überschlafen verhindern).
   - id: alarm_timeout_script
     mode: restart
