@@ -30,6 +30,16 @@ esphome:
       - select.set:
           id: alarm_melody_select
           option: !lambda 'return id(alarm_melody_name);'
+      - if:
+          condition:
+            lambda: 'return !id(weekday_only);'
+          then:
+            - lvgl.label.update:
+                id: weekday_btn_label
+                text: "AUS"
+            - lvgl.widget.update:
+                id: weekday_toggle_btn
+                bg_color: 0x666666
       - select.set:
           id: bg_color_select
           option: !lambda |-
@@ -200,6 +210,12 @@ switch:
       - lvgl.label.update:
           id: weekday_label
           text: "Mo-Fr"
+      - lvgl.label.update:
+          id: weekday_btn_label
+          text: "AN"
+      - lvgl.widget.update:
+          id: weekday_toggle_btn
+          bg_color: 0x1A1A2E
     turn_off_action:
       - globals.set:
           id: weekday_only
@@ -207,6 +223,12 @@ switch:
       - lvgl.label.update:
           id: weekday_label
           text: ""
+      - lvgl.label.update:
+          id: weekday_btn_label
+          text: "AUS"
+      - lvgl.widget.update:
+          id: weekday_toggle_btn
+          bg_color: 0x666666
 
 # ── Alarmzeit (Home Assistant Datetime) ───────────────────
 datetime:
@@ -419,6 +441,7 @@ script:
     mode: restart
     then:
       - delay: 2min
+      - lvgl.page.show: analog_clock_page
       - light.turn_off: backlight
       - globals.set:
           id: display_sleeping
@@ -543,7 +566,7 @@ lvgl:
         - label:
             id: settings_header_label
             align: TOP_MID
-            y: 100
+            y: 70
             text_font: montserrat_24
             text_color: 0x000000
             text: "Alarm einstellen"
@@ -552,7 +575,7 @@ lvgl:
             id: hour_value_label
             align: CENTER
             x: -80
-            y: -10
+            y: -30
             text_font: montserrat_36
             text_color: 0x000000
             text: !lambda |-
@@ -564,7 +587,7 @@ lvgl:
             id: colon_label
             align: CENTER
             x: 0
-            y: -10
+            y: -30
             text_font: montserrat_36
             text_color: 0x000000
             text: ":"
@@ -573,7 +596,7 @@ lvgl:
             id: minute_value_label
             align: CENTER
             x: 80
-            y: -10
+            y: -30
             text_font: montserrat_36
             text_color: 0x000000
             text: !lambda |-
@@ -585,7 +608,7 @@ lvgl:
             id: hour_plus_btn
             align: CENTER
             x: -80
-            y: -70
+            y: -90
             width: 80
             height: 60
             bg_color: 0x1A1A2E
@@ -610,7 +633,7 @@ lvgl:
             id: hour_minus_btn
             align: CENTER
             x: -80
-            y: 50
+            y: 30
             width: 80
             height: 60
             bg_color: 0x1A1A2E
@@ -635,7 +658,7 @@ lvgl:
             id: minute_plus_btn
             align: CENTER
             x: 80
-            y: -70
+            y: -90
             width: 80
             height: 60
             bg_color: 0x1A1A2E
@@ -660,7 +683,7 @@ lvgl:
             id: minute_minus_btn
             align: CENTER
             x: 80
-            y: 50
+            y: 30
             width: 80
             height: 60
             bg_color: 0x1A1A2E
@@ -681,10 +704,43 @@ lvgl:
                   text_color: 0xFFFFFF
                   text: "-"
 
+        - label:
+            align: CENTER
+            x: -55
+            y: 98
+            text_font: montserrat_24
+            text_color: 0x000000
+            text: "Mo-Fr"
+
+        - button:
+            id: weekday_toggle_btn
+            align: CENTER
+            x: 60
+            y: 98
+            width: 90
+            height: 46
+            bg_color: 0x1A1A2E
+            border_width: 0
+            on_short_click:
+              - if:
+                  condition:
+                    lambda: 'return id(weekday_only);'
+                  then:
+                    - switch.turn_off: weekday_only_switch
+                  else:
+                    - switch.turn_on: weekday_only_switch
+            widgets:
+              - label:
+                  id: weekday_btn_label
+                  align: CENTER
+                  text_font: montserrat_22
+                  text_color: 0xFFFFFF
+                  text: "AN"
+
         - button:
             id: settings_back_btn
             align: BOTTOM_MID
-            y: -60
+            y: -50
             width: 200
             height: 56
             bg_color: 0x1A1A2E
@@ -708,7 +764,7 @@ lvgl:
                   align: CENTER
                   text_font: montserrat_24
                   text_color: 0xFFFFFF
-                  text: "Setzen"
+                  text: "OK"
 
     # ----------------------------------------------------------
     # Seite 2: Alarm klingelt
@@ -790,7 +846,7 @@ lvgl:
     # ----------------------------------------------------------
     # Seite 3: Analoge Uhr (Hauptseite)
     # Tap auf Alarm-Label: Alarm ein/aus
-    # Long-Press auf Alarm-Label: Einstellungsseite
+    # Tap auf Zahnrad: Einstellungsseite
     # ----------------------------------------------------------
     - id: analog_clock_page
       widgets:
@@ -859,7 +915,7 @@ lvgl:
                             color: 0x000000
                             r_mod: -50
                             value: 0
-              # Alarm-Label: Tap = ein/aus, Long-Press = Einstellungen
+              # Alarm-Label: Tap = ein/aus
               - button:
                   id: analog_alarm_btn
                   width: 154
@@ -883,8 +939,6 @@ lvgl:
                                      id(alarm_hour), id(alarm_minute));
                           }
                           return buf;
-                  on_long_press:
-                    - lvgl.page.show: alarm_settings_page
                   widgets:
                     - label:
                         id: analog_alarm_label
@@ -902,6 +956,25 @@ lvgl:
                                      id(alarm_hour), id(alarm_minute));
                           }
                           return buf;
+              # Zahnrad-Icon: Tap öffnet Einstellungsseite
+              - button:
+                  id: settings_icon_btn
+                  align: CENTER
+                  y: -90
+                  width: 50
+                  height: 50
+                  bg_opa: 0%
+                  border_width: 0
+                  shadow_width: 0
+                  on_short_click:
+                    - lvgl.page.show: alarm_settings_page
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: montserrat_24
+                        text_color: 0x000000
+                        text: !lambda 'return std::string(LV_SYMBOL_SETTINGS);'
+
               # Mo-Fr Anzeige unter dem Alarm-Label
               - label:
                   id: weekday_label
