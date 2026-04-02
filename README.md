@@ -1,85 +1,85 @@
 # ESP32 Alarm Clock
 
-ESPHome-Konfiguration für einen analogen Wecker auf Basis des **LilyGo T-RGB 2.1"** (rundes Display, ESP32-S3). Vollständig in Home Assistant integriert.
+ESPHome configuration for an analog alarm clock based on the **LilyGo T-RGB 2.1"** (round display, ESP32-S3). Fully integrated with Home Assistant.
 
 ## Hardware
 
-| Komponente | Details |
+| Component | Details |
 |---|---|
 | Board | LilyGo T-RGB 2.1" |
 | MCU | ESP32-S3 (16 MB Flash, PSRAM Octal 80 MHz) |
-| Display | MIPI-RGB, 480×480, rund |
+| Display | MIPI-RGB, 480×480, round |
 | Touch | FT5x06 (I2C) |
-| Buzzer | Passiv, GPIO38 (LEDC, ehemaliger SD-Karten-Pin) |
-| Backlight | GPIO46 (LEDC, dimmbar) |
-| IO-Expander | XL9535 (Display-Reset, SPI) |
+| Buzzer | Passive, GPIO38 (LEDC, formerly SD card pin) |
+| Backlight | GPIO46 (LEDC, dimmable) |
+| IO Expander | XL9535 (display reset, SPI) |
 
 ## Features
 
-- **Analoge Uhr** — LVGL-Meter mit Stunden- und Minutenzeiger
-- **Alarm** — Mo–Fr oder täglich, einstellbare Uhrzeit per Touch oder Home Assistant
-- **RTTTL-Melodien** — Reveille, Entertainer, Frere Jacques (auswählbar)
-- **Snooze** — 5 Minuten, beliebig oft
-- **Auto-Stop** — Alarm stoppt nach 5 Minuten automatisch
-- **Display-Sleep** — Backlight schaltet nach 2 Minuten Inaktivität ab, wechselt zur Hauptseite
-- **Wake-on-Touch** — Erster Touch weckt nur das Display (kein versehentlicher Button-Tap)
-- **5 Zeiger-Designs** — Klassisch, Weiss, Rot, Gold, Neon (per HA-Select)
-- **4 Hintergrundfarben** — Pink, Weiss, Schwarz, Dunkelblau
+- **Analog clock** — LVGL meter with hour and minute hands
+- **Alarm** — weekdays only or daily, time configurable via touch or Home Assistant
+- **RTTTL melodies** — Reveille, Entertainer, Frere Jacques (selectable)
+- **Snooze** — 5 minutes, repeatable
+- **Auto-stop** — alarm stops automatically after 5 minutes
+- **Display sleep** — backlight turns off after 2 minutes of inactivity, returns to main page
+- **Wake-on-touch** — first touch only wakes the display (no accidental button tap)
+- **5 hand styles** — Classic, White, Red, Gold, Neon (via HA select)
+- **4 background colors** — Pink, White, Black, Dark Blue
 
 ## Home Assistant Entities
 
-| Typ | Name | Beschreibung |
+| Type | Name | Description |
 |---|---|---|
-| `switch` | Alarm aktiv | Alarm ein/aus |
-| `switch` | Nur Mo-Fr | Wochentag-Filter |
-| `datetime` | Alarmzeit | Weckzeit einstellen |
-| `select` | Alarm Melodie | Melodie wählen |
-| `select` | Zeiger Design | Zeiger-Stil wählen |
-| `select` | Hintergrundfarbe | Zifferblatt-Farbe |
-| `light` | Display Backlight | Helligkeit steuern |
+| `switch` | Alarm aktiv | Enable/disable alarm |
+| `switch` | Nur Mo-Fr | Weekday filter |
+| `datetime` | Alarmzeit | Set alarm time |
+| `select` | Alarm Melodie | Choose melody |
+| `select` | Zeiger Design | Choose hand style |
+| `select` | Hintergrundfarbe | Choose dial color |
+| `light` | Display Backlight | Control brightness |
 
-## Seiten (LVGL)
+## Pages (LVGL)
 
 ```
-analog_clock_page     → Hauptseite: analoge Uhr
-alarm_settings_page   → Alarmzeit + Mo-Fr einstellen (Zugang: Zahnrad-Icon)
-alarm_ringing_page    → Alarm klingelt: Snooze / Stopp
+analog_clock_page     → Main page: analog clock
+alarm_settings_page   → Set alarm time + weekday filter (access: tap gear icon)
+alarm_ringing_page    → Alarm ringing: Snooze / Stop
 ```
 
-## Touch-Bedienung
+## Touch Controls
 
-| Geste | Aktion |
+| Gesture | Action |
 |---|---|
-| Tap auf Alarm-Label | Alarm ein/aus |
-| Tap auf Zahnrad-Icon | Einstellungsseite öffnen |
-| Tap auf Mo-Fr Toggle | Wochentag-Filter ein/aus |
-| Tap auf "OK" | Einstellungen bestätigen, zurück zur Uhr |
-| Tap auf "Snooze 5min" | Alarm 5 Minuten pausieren |
-| Tap auf "Stopp" | Alarm beenden |
-| Erster Touch bei schlafen Display | Display aufwecken (kein Button-Tap) |
+| Tap alarm label | Toggle alarm on/off |
+| Tap gear icon | Open settings page |
+| Tap Mo-Fr toggle | Toggle weekday filter on/off |
+| Tap "OK" | Confirm settings, return to clock |
+| Tap "Snooze 5min" | Snooze alarm for 5 minutes |
+| Tap "Stopp" | Stop alarm |
+| Any touch (display sleeping) | Wake display only (no button action) |
 
 ## Installation
 
-1. `secrets.yaml` anlegen:
+1. Create `secrets.yaml`:
 
 ```yaml
-api_key: "dein_api_key"
-ota_password: "dein_ota_passwort"
-wifi_ssid: "dein_wlan"
-wifi_password: "dein_wlan_passwort"
-fallback_password: "fallback_passwort"
+api_key: "your_api_key"
+ota_password: "your_ota_password"
+wifi_ssid: "your_wifi"
+wifi_password: "your_wifi_password"
+fallback_password: "fallback_password"
 ```
 
-2. Firmware flashen:
+2. Flash firmware:
 
 ```bash
 esphome run alarm-clock.yaml --device COMx
 ```
 
-## Projektstruktur
+## Project Structure
 
 ```
-alarm-clock.yaml   # ESPHome-Konfiguration
-secrets.yaml       # Zugangsdaten (nicht im Repo)
-.planning/         # GSD Planungsdokumente
+alarm-clock.yaml   # ESPHome configuration
+secrets.yaml       # Credentials (not in repo)
+.planning/         # GSD planning documents
 ```

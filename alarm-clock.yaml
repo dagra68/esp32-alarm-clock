@@ -1,6 +1,6 @@
 # ============================================================
 #  ESP32 Alarm Clock
-#  Hardware: LilyGo T-RGB 2.1" (rund) mit ESP32-S3
+#  Hardware: LilyGo T-RGB 2.1" (round) with ESP32-S3
 #  Framework: ESPHome (ESP-IDF)
 # ============================================================
 
@@ -8,13 +8,13 @@ esphome:
   name: alarm-clock
   friendly_name: "Wecker"
   on_boot:
-    priority: -100   # nach vollständiger Initialisierung starten
+    priority: -100   # start after full initialization
     then:
       - lvgl.page.show: analog_clock_page
       - script.execute: analog_time_update
       - script.execute: hand_style_apply
       - script.execute: display_sleep_timer
-      # Alarm-Labels mit gespeicherten Werten befüllen
+      # populate alarm labels with stored values
       - lvgl.label.update:
           id: hour_value_label
           text: !lambda |-
@@ -50,7 +50,7 @@ esphome:
   platformio_options:
     board_build.flash_mode: dio
 
-# ── Board ──────────────────────────────────────────────────
+# ── Board ─────────────────────────────────────────────────
 esp32:
   board: esp32-s3-devkitc-1
   variant: esp32s3
@@ -62,7 +62,7 @@ psram:
   mode: octal
   speed: 80MHz
 
-# ── Dienste ────────────────────────────────────────────────
+# ── Services ───────────────────────────────────────────────
 logger:
 
 api:
@@ -80,18 +80,18 @@ wifi:
     ssid: "Wecker-Fallback"
     password: !secret fallback_password
 
-# ── Hardware-Bus ───────────────────────────────────────────
+# ── Hardware Bus ───────────────────────────────────────────
 i2c:
   sda: GPIO8
   scl: GPIO48
   frequency: 400kHz
 
-# IO-Expander für Display-Reset und SPI-Pins
+# IO expander for display reset and SPI pins
 xl9535:
   - id: xl9535_hub
     address: 0x20
 
-# Software-SPI für Display-Konfiguration
+# Software SPI for display initialization
 spi:
   - id: lcd_spi
     clk_pin:
@@ -108,7 +108,7 @@ display:
     model: T-RGB-2.1
     id: my_display
     auto_clear_enabled: false
-    update_interval: never   # LVGL übernimmt das Rendering
+    update_interval: never   # LVGL handles rendering
     hsync_pin: GPIO47
     show_test_card: true
     reset_pin:
@@ -147,20 +147,20 @@ font:
     size: 48
     glyphs: "\U000F0493"   # mdi:cog
 
-# ── Ausgänge ───────────────────────────────────────────────
+# ── Outputs ────────────────────────────────────────────────
 output:
-  # Backlight per PWM dimmbar
+  # Backlight PWM dimmable
   - platform: ledc
     id: backlight_output
     pin: GPIO46
     frequency: 1000Hz
-  # Passiver Buzzer für RTTTL-Melodien (SD-Karten-Pin IO38, nicht verwendet)
+  # Passive buzzer for RTTTL melodies (SD card pin IO38, unused)
   - platform: ledc
     id: buzzer_output
     pin: GPIO38
     frequency: 1000Hz
 
-# ── Licht ──────────────────────────────────────────────────
+# ── Light ──────────────────────────────────────────────────
 light:
   - platform: monochromatic
     output: backlight_output
@@ -171,7 +171,7 @@ light:
 
 # ── Switches (Home Assistant) ──────────────────────────────
 switch:
-  # Alarm aktivieren/deaktivieren
+  # Enable/disable alarm
   - platform: template
     name: "Alarm aktiv"
     id: alarm_enabled_switch
@@ -202,7 +202,7 @@ switch:
                      id(alarm_hour), id(alarm_minute));
             return buf;
 
-  # Alarm nur Mo–Fr auslösen
+  # Trigger alarm on weekdays only (Mon–Fri)
   - platform: template
     name: "Nur Mo-Fr"
     id: weekday_only_switch
@@ -237,7 +237,7 @@ switch:
           id: weekday_toggle_btn
           bg_color: 0x666666
 
-# ── Alarmzeit (Home Assistant Datetime) ───────────────────
+# ── Alarm Time (Home Assistant Datetime) ──────────────────
 datetime:
   - platform: template
     name: "Alarmzeit"
@@ -282,7 +282,7 @@ datetime:
             snprintf(buf, sizeof(buf), "%02d", id(alarm_minute));
             return buf;
 
-# ── Globale Variablen (Flash-persistent) ──────────────────
+# ── Global Variables (flash-persistent) ───────────────────
 globals:
   - id: alarm_hour
     type: int
@@ -296,7 +296,7 @@ globals:
     type: bool
     restore_value: yes
     initial_value: 'false'
-  # Laufzeit-Flag: Alarm klingelt gerade
+  # Runtime flag: alarm is currently ringing
   - id: alarm_ringing
     type: bool
     restore_value: no
@@ -324,9 +324,9 @@ globals:
     restore_value: no
     initial_value: 'false'
 
-# ── Select-Entitäten (Home Assistant) ─────────────────────
+# ── Select Entities (Home Assistant) ──────────────────────
 select:
-  # Alarm-Melodie wählen
+  # Select alarm melody
   - platform: template
     name: "Alarm Melodie"
     id: alarm_melody_select
@@ -342,7 +342,7 @@ select:
           id: alarm_melody_name
           value: !lambda 'return x;'
 
-  # Zeiger-Design wählen
+  # Select hand style
   - platform: template
     name: "Zeiger Design"
     id: hand_style_select
@@ -362,7 +362,7 @@ select:
           value: !lambda 'return x;'
       - script.execute: hand_style_apply
 
-  # Hintergrundfarbe des Zifferblatts
+  # Dial background color
   - platform: template
     name: "Hintergrundfarbe"
     id: bg_color_select
@@ -389,7 +389,7 @@ rtttl:
   output: buzzer_output
   id: alarm_buzzer
   on_finished_playback:
-    # Melodie automatisch wiederholen solange Alarm aktiv
+    # Automatically repeat melody while alarm is active
     - if:
         condition:
           lambda: 'return id(alarm_ringing);'
@@ -404,7 +404,7 @@ rtttl:
 
 # ── Scripts ────────────────────────────────────────────────
 script:
-  # Alarm-Timeout: nach 5min automatisch stoppen (Überschlafen verhindern).
+  # Alarm timeout: auto-stop after 5 min to prevent oversleeping.
   - id: alarm_timeout_script
     mode: restart
     then:
@@ -415,7 +415,7 @@ script:
       - rtttl.stop:
       - lvgl.page.show: analog_clock_page
 
-  # Snooze: Alarm pausieren, nach 5min erneut klingeln.
+  # Snooze: pause alarm, ring again after 5 min.
   - id: snooze_action
     mode: restart
     then:
@@ -433,7 +433,7 @@ script:
       - lvgl.page.show: alarm_ringing_page
       - script.execute: alarm_timeout_script
 
-  # Alarm vollständig beenden und zur Uhr zurückspringen.
+  # Fully stop alarm and return to clock.
   - id: alarm_stop_action
     mode: single
     then:
@@ -443,7 +443,7 @@ script:
           id(alarm_enabled) = false;
       - lvgl.page.show: analog_clock_page
 
-  # Display nach 2min Inaktivität ausschalten (nicht während Alarm läutet).
+  # Turn off display after 2 min of inactivity (not while alarm is ringing).
   - id: display_sleep_timer
     mode: restart
     then:
@@ -458,7 +458,7 @@ script:
                 id: display_sleeping
                 value: 'true'
 
-  # Analogzeiger auf aktuelle Zeit setzen.
+  # Set analog hands to current time.
   - id: analog_time_update
     then:
       - lvgl.indicator.update:
@@ -470,7 +470,7 @@ script:
             auto now = id(sntp_time).now();
             return std::fmod(now.hour, 12) * 60 + now.minute;
 
-  # Zeiger-Design anwenden (Farbe und Breite je nach Auswahl).
+  # Apply hand style (color and width based on selection).
   - id: hand_style_apply
     then:
       - lambda: |-
@@ -504,17 +504,17 @@ script:
           }
           lv_obj_invalidate(id(analog_meter));
 
-# ── Zeitquelle ─────────────────────────────────────────────
+# ── Time Source ────────────────────────────────────────────
 time:
   - platform: homeassistant
     id: sntp_time
     timezone: "Europe/Berlin"
     on_time_sync:
       then:
-        - logger.log: "NTP-Zeit synchronisiert"
+        - logger.log: "NTP time synchronized"
         - script.execute: analog_time_update
     on_time:
-      # Jede Minute: Alarm prüfen + Zeiger aktualisieren
+      # Every minute: check alarm + update hands
       - seconds: 0
         minutes: /1
         then:
@@ -568,8 +568,8 @@ lvgl:
   pages:
 
     # ----------------------------------------------------------
-    # Seite 1: Alarm-Einstellungen
-    # Zugang: Long-Press auf Alarm-Label der Hauptseite
+    # Page 1: Alarm Settings
+    # Access: tap the gear icon on the main page
     # ----------------------------------------------------------
     - id: alarm_settings_page
       bg_color: 0xFFFFFF
@@ -778,8 +778,8 @@ lvgl:
                   text: "OK"
 
     # ----------------------------------------------------------
-    # Seite 2: Alarm klingelt
-    # Zeigt Snooze (5min) und Stopp
+    # Page 2: Alarm Ringing
+    # Shows Snooze (5 min) and Stop
     # ----------------------------------------------------------
     - id: alarm_ringing_page
       bg_color: 0x1A1A2E
@@ -826,7 +826,7 @@ lvgl:
             bg_color: 0xFFAA00
             border_width: 0
             on_short_click:
-              - logger.log: "TOUCH: snooze_btn geklickt"
+              - logger.log: "TOUCH: snooze_btn clicked"
               - script.execute: snooze_action
             widgets:
               - label:
@@ -845,7 +845,7 @@ lvgl:
             bg_color: 0xFF3333
             border_width: 0
             on_short_click:
-              - logger.log: "TOUCH: stopp_btn geklickt"
+              - logger.log: "TOUCH: stopp_btn clicked"
               - script.execute: alarm_stop_action
             widgets:
               - label:
@@ -855,9 +855,9 @@ lvgl:
                   text: "Stopp"
 
     # ----------------------------------------------------------
-    # Seite 3: Analoge Uhr (Hauptseite)
-    # Tap auf Alarm-Label: Alarm ein/aus
-    # Tap auf Zahnrad: Einstellungsseite
+    # Page 3: Analog Clock (main page)
+    # Tap alarm label: toggle alarm on/off
+    # Tap gear icon: open settings page
     # ----------------------------------------------------------
     - id: analog_clock_page
       widgets:
@@ -880,7 +880,7 @@ lvgl:
                   text_color: 0x000000
                   text_font: montserrat_48
                   scales:
-                    # Minutenskala (0–60)
+                    # Minute scale (0–60)
                     - range_from: 0
                       range_to: 60
                       angle_range: 360
@@ -897,7 +897,7 @@ lvgl:
                             color: 0x000000
                             r_mod: -4
                             value: 0
-                    # Stundenzahlen (1–12)
+                    # Hour numbers (1–12)
                     - range_from: 1
                       range_to: 12
                       angle_range: 330
@@ -912,7 +912,7 @@ lvgl:
                           length: 10
                           color: 0x000000
                           label_gap: 40
-                    # Stundenskala (0–720 = 12h × 60min)
+                    # Hour scale (0–720 = 12h × 60min)
                     - range_from: 0
                       range_to: 720
                       angle_range: 360
@@ -926,7 +926,7 @@ lvgl:
                             color: 0x000000
                             r_mod: -50
                             value: 0
-              # Alarm-Label: Tap = ein/aus
+              # Alarm label: tap = toggle on/off
               - button:
                   id: analog_alarm_btn
                   width: 154
@@ -967,7 +967,7 @@ lvgl:
                                      id(alarm_hour), id(alarm_minute));
                           }
                           return buf;
-              # Zahnrad-Icon: Tap öffnet Einstellungsseite
+              # Gear icon: tap opens settings page
               - button:
                   id: settings_icon_btn
                   align: CENTER
@@ -986,7 +986,7 @@ lvgl:
                         text_color: 0x000000
                         text: "\U000F0493"
 
-              # Mo-Fr Anzeige unter dem Alarm-Label
+              # Weekday indicator below alarm label
               - label:
                   id: weekday_label
                   align: CENTER
