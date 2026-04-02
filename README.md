@@ -10,19 +10,19 @@ ESPHome-Konfiguration für einen analogen Wecker auf Basis des **LilyGo T-RGB 2.
 | MCU | ESP32-S3 (16 MB Flash, PSRAM Octal 80 MHz) |
 | Display | MIPI-RGB, 480×480, rund |
 | Touch | FT5x06 (I2C) |
-| Buzzer | Passiv, GPIO4 (LEDC) |
+| Buzzer | Passiv, GPIO38 (LEDC, ehemaliger SD-Karten-Pin) |
 | Backlight | GPIO46 (LEDC, dimmbar) |
 | IO-Expander | XL9535 (Display-Reset, SPI) |
 
 ## Features
 
 - **Analoge Uhr** — LVGL-Meter mit Stunden- und Minutenzeiger
-- **Alarm** — Mo–Fr oder täglich, einstellbare Uhrzeit per Home Assistant
+- **Alarm** — Mo–Fr oder täglich, einstellbare Uhrzeit per Touch oder Home Assistant
 - **RTTTL-Melodien** — Reveille, Entertainer, Frere Jacques (auswählbar)
 - **Snooze** — 5 Minuten, beliebig oft
 - **Auto-Stop** — Alarm stoppt nach 5 Minuten automatisch
-- **Display-Timeout** — Backlight schaltet nach 3 Minuten Inaktivität ab
-- **Wake-on-Touch** — Beliebiger Touch weckt das Display wieder auf
+- **Display-Sleep** — Backlight schaltet nach 2 Minuten Inaktivität ab, wechselt zur Hauptseite
+- **Wake-on-Touch** — Erster Touch weckt nur das Display (kein versehentlicher Button-Tap)
 - **5 Zeiger-Designs** — Klassisch, Weiss, Rot, Gold, Neon (per HA-Select)
 - **4 Hintergrundfarben** — Pink, Weiss, Schwarz, Dunkelblau
 
@@ -42,7 +42,7 @@ ESPHome-Konfiguration für einen analogen Wecker auf Basis des **LilyGo T-RGB 2.
 
 ```
 analog_clock_page     → Hauptseite: analoge Uhr
-alarm_settings_page   → Alarmzeit einstellen (Zugang: Long-Press auf Alarm-Label)
+alarm_settings_page   → Alarmzeit + Mo-Fr einstellen (Zugang: Zahnrad-Icon)
 alarm_ringing_page    → Alarm klingelt: Snooze / Stopp
 ```
 
@@ -51,10 +51,12 @@ alarm_ringing_page    → Alarm klingelt: Snooze / Stopp
 | Geste | Aktion |
 |---|---|
 | Tap auf Alarm-Label | Alarm ein/aus |
-| Long-Press auf Alarm-Label | Alarmzeit einstellen |
+| Tap auf Zahnrad-Icon | Einstellungsseite öffnen |
+| Tap auf Mo-Fr Toggle | Wochentag-Filter ein/aus |
+| Tap auf "OK" | Einstellungen bestätigen, zurück zur Uhr |
 | Tap auf "Snooze 5min" | Alarm 5 Minuten pausieren |
 | Tap auf "Stopp" | Alarm beenden |
-| Beliebiger Touch | Display aufwecken |
+| Erster Touch bei schlafen Display | Display aufwecken (kein Button-Tap) |
 
 ## Installation
 
