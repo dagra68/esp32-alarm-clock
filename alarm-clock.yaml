@@ -140,6 +140,13 @@ touchscreen:
             - lvgl.resume:
       - script.execute: display_sleep_timer
 
+# ── Fonts ──────────────────────────────────────────────────
+font:
+  - file: 'https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/fonts/materialdesignicons-webfont.ttf'
+    id: mdi_48
+    size: 48
+    glyphs: "\U000F0493"   # mdi:cog
+
 # ── Ausgänge ───────────────────────────────────────────────
 output:
   # Backlight per PWM dimmbar
@@ -436,16 +443,20 @@ script:
           id(alarm_enabled) = false;
       - lvgl.page.show: analog_clock_page
 
-  # Display nach 2min Inaktivität ausschalten.
+  # Display nach 2min Inaktivität ausschalten (nicht während Alarm läutet).
   - id: display_sleep_timer
     mode: restart
     then:
       - delay: 2min
-      - lvgl.page.show: analog_clock_page
-      - light.turn_off: backlight
-      - globals.set:
-          id: display_sleeping
-          value: 'true'
+      - if:
+          condition:
+            lambda: 'return !id(alarm_ringing);'
+          then:
+            - lvgl.page.show: analog_clock_page
+            - light.turn_off: backlight
+            - globals.set:
+                id: display_sleeping
+                value: 'true'
 
   # Analogzeiger auf aktuelle Zeit setzen.
   - id: analog_time_update
@@ -961,8 +972,8 @@ lvgl:
                   id: settings_icon_btn
                   align: CENTER
                   y: -90
-                  width: 50
-                  height: 50
+                  width: 75
+                  height: 75
                   bg_opa: 0%
                   border_width: 0
                   shadow_width: 0
@@ -971,9 +982,9 @@ lvgl:
                   widgets:
                     - label:
                         align: CENTER
-                        text_font: montserrat_24
+                        text_font: mdi_48
                         text_color: 0x000000
-                        text: !lambda 'return std::string(LV_SYMBOL_SETTINGS);'
+                        text: "\U000F0493"
 
               # Mo-Fr Anzeige unter dem Alarm-Label
               - label:
